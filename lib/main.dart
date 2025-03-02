@@ -1,32 +1,49 @@
 import 'package:flutter/material.dart';
-import 'services/api_service.dart';
+import 'package:provider/provider.dart';
+import 'viewmodels/enemy_viewmodel.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => EnemyViewModel()..fetchEnemy(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  Future<void> testApi() async {
-    try {
-      final response = await ApiService.getRequest("/enemies");
-      print("Réponse API : $response");
-    } catch (e) {
-      print("Erreur : $e");
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    testApi(); // 🔥 Teste la connexion à Flask au démarrage
-
     return MaterialApp(
       title: 'Clicker Game',
-      theme: ThemeData(primarySwatch: Colors.blue),
       home: Scaffold(
-        appBar: AppBar(title: Text("Test API Flask")),
-        body: Center(child: Text("Vérifie la console pour voir la réponse")),
+        appBar: AppBar(title: Text("Test Enemy ViewModel")),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Consumer<EnemyViewModel>(
+                builder: (context, viewModel, child) {
+                  if (viewModel.isLoading) {
+                    return CircularProgressIndicator();
+                  }
+                  return Column(
+                    children: [
+                      Text("Ennemi : ${viewModel.enemy.name}"),
+                      Text("Vie : ${viewModel.enemy.currentLife} / ${viewModel.enemy.totalLife}"),
+                      ElevatedButton(
+                        onPressed: () => viewModel.attackEnemy(1),
+                        child: Text("Attaquer"),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
