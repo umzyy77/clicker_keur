@@ -1,4 +1,4 @@
-# clicker_keur
+# clicker_eru
 
 A new Flutter project.
 
