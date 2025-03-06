@@ -53,8 +53,11 @@ class PlayerService {
   /// 🔹 Récupère l’ID du joueur stocké
   Future<int?> getStoredPlayerId() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getInt('player_id');
+    int? playerId = prefs.getInt('player_id');
+    print("🔍 ID stocké localement: $playerId"); // DEBUG
+    return playerId;
   }
+
 
   /// 🔹 Supprime l’ID du joueur stocké
   Future<void> _removePlayerId() async {

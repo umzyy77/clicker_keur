@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:hacker_clicker/views/home_view.dart';
-import 'package:hacker_clicker/core/services/player_service.dart';
-import 'package:hacker_clicker/views/game_view.dart';
-
-import 'core/services/player_mission_service.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'widgets/splash_screen.dart';
+import 'viewmodels/player_viewmodel.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Initialisation obligatoire
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env"); // Charger les variables d’environnement
 
-  final playerService = PlayerService();
-  int? storedPlayerId = await playerService.getStoredPlayerId();
-
-  runApp(MyApp(storedPlayerId: storedPlayerId));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => PlayerViewModel()..loadPlayer()), // Charger le joueur au lancement
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  final int? storedPlayerId;
-
-  const MyApp({super.key, this.storedPlayerId});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Hacker Clicker",
       debugShowCheckedModeBanner: false,
+      title: 'Hacking Clicker',
       theme: ThemeData.dark(),
-      home: storedPlayerId != null ? const GameView() : const HomeView(), // Redirige si joueur existant
+      home: SplashScreen(),
     );
   }
 }

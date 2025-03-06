@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../config/env.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiService {
-  final String apiUrl = Env.apiUrl;
+  final String apiUrl = dotenv.env['API_URL'] ?? 'http://127.0.0.1:5000';
 
   /// 🔹 Effectue une requête GET
   Future<dynamic> getRequest(String endpoint) async {
