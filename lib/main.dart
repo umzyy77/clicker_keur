@@ -1,35 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:untitled1/viewmodels/enemy_viewmodel.dart';
-import 'package:untitled1/viewmodels/player_viewmodel.dart';
-import 'package:untitled1/views/game_view.dart';
-import 'core/config/config.dart';
-import 'viewmodels/user_viewmodel.dart';
+import 'package:hacker_clicker/views/home_view.dart';
+import 'package:hacker_clicker/core/services/player_service.dart';
+import 'package:hacker_clicker/views/game_view.dart';
 
-Future main() async {
-  await Config.load();
-  runApp(const MyApp());
+import 'core/services/player_mission_service.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Initialisation obligatoire
+
+  final playerService = PlayerService();
+  int? storedPlayerId = await playerService.getStoredPlayerId();
+
+  runApp(MyApp(storedPlayerId: storedPlayerId));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final int? storedPlayerId;
+
+  const MyApp({super.key, this.storedPlayerId});
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => UserViewModel()),
-        //ChangeNotifierProvider(create: (context) => PlayerViewModel()),
-        ChangeNotifierProvider(create: (context) => EnemyViewModel()..fetchEnemy())
-      ],
-      child: MaterialApp(
-        title: 'Slime clicker',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: const GameView(),
-      ),
+    return MaterialApp(
+      title: "Hacker Clicker",
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.dark(),
+      home: storedPlayerId != null ? const GameView() : const HomeView(), // Redirige si joueur existant
     );
   }
 }
