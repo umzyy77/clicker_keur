@@ -5,7 +5,7 @@ import '../../models/player_mission_model.dart';
 class PlayerMissionService {
   final ApiService apiService = ApiService();
 
-  /// 🔹 Récupère toutes les missions d'un joueur
+  /// 🔹 Récupère toutes les missions d'un joueur pour le menu ou autre
   Future<List<PlayerMissionModel>> getMissionsForPlayer(int playerId) async {
     final response = await apiService.getRequest('/player_missions/$playerId');
 
@@ -15,7 +15,7 @@ class PlayerMissionService {
     return [];
   }
 
-  /// 🔹 Récupère la première mission déverrouillée d’un joueur
+  /// 🔹 Récupère la première mission déverrouillée d’un joueur (methode pas trop utile)
   Future<int?> getFirstUnlockedMission(int playerId) async {
     final response = await apiService.getRequest('/player_missions/$playerId/first_unlocked');
 
@@ -25,7 +25,7 @@ class PlayerMissionService {
     return null;
   }
 
-  /// 🔹 Démarre une mission pour le joueur et stocke localement son ID
+  /// 🔹 Démarre une mission pour le joueur et stocke localement son ID + le status de la mission deviens "in_progress"
   Future<bool> startMission(int playerId, int missionId) async {
     final response = await apiService.postRequest('/player_missions/$playerId/start', {"mission_id": missionId});
 
@@ -36,7 +36,7 @@ class PlayerMissionService {
     return false;
   }
 
-  /// 🔹 Vérifie si une nouvelle mission a été débloquée
+  /// 🔹 Vérifie si une nouvelle mission a été débloquée pour l'animation du cadenas debloqué au menu ou autre animation
   Future<int?> checkNewlyUnlockedMission(int playerId) async {
     final response = await apiService.getRequest('/player_missions/$playerId/newly_unlocked');
 
@@ -46,7 +46,7 @@ class PlayerMissionService {
     return null;
   }
 
-  /// 🔹 Incrémente les clics d’une mission et envoie à l’API
+  /// 🔹 Incrémente les clics d’une mission et sa logique de gameloop à envoie à l’API
   Future<bool> incrementClicks(int playerId, int missionId) async {
     return await apiService.patchRequest('/player_missions/$playerId/increment', {"mission_id": missionId});
   }

@@ -4,7 +4,9 @@ import '../../models/mission_model.dart';
 class MissionService {
   final ApiService apiService = ApiService();
 
-  /// 🔹 Récupère toutes les missions disponibles
+  ///methodes pas trop utiles pour le moment
+
+  /// 🔹 Récupère toutes les missions disponibles du jeu mais pas du joueur
   Future<List<MissionModel>> getAllMissions() async {
     final response = await apiService.getRequest('/missions');
 
