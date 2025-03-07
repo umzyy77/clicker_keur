@@ -1,35 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:untitled1/viewmodels/enemy_viewmodel.dart';
-import 'package:untitled1/viewmodels/player_viewmodel.dart';
-import 'package:untitled1/views/game_view.dart';
-import 'core/config/config.dart';
-import 'viewmodels/user_viewmodel.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'widgets/splash_screen.dart';
+import 'viewmodels/player_viewmodel.dart';
 
-Future main() async {
-  await Config.load();
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env"); // Charger les variables d’environnement
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => PlayerViewModel()..loadPlayer()), // Charger le joueur au lancement
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => UserViewModel()),
-        //ChangeNotifierProvider(create: (context) => PlayerViewModel()),
-        ChangeNotifierProvider(create: (context) => EnemyViewModel()..fetchEnemy())
-      ],
-      child: MaterialApp(
-        title: 'Slime clicker',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: const GameView(),
-      ),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Hacking Clicker',
+      theme: ThemeData.dark(),
+      home: SplashScreen(),
     );
   }
 }
