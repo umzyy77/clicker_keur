@@ -18,27 +18,19 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _checkPlayer() async {
     final playerViewModel = Provider.of<PlayerViewModel>(context, listen: false);
-    await playerViewModel.loadPlayer(); // Assurer le chargement avant navigation
+    await playerViewModel.loadPlayer();
 
     Future.delayed(Duration(seconds: 2), () {
       if (playerViewModel.player != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => HomeView()),
-        );
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeView()));
       } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => CreatePlayerView()),
-        );
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => CreatePlayerView()));
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(child: CircularProgressIndicator()),
-    );
+    return Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }

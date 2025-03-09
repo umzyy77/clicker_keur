@@ -1,70 +1,107 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/material.dart';
 import './api_service.dart';
 import '../../models/player_model.dart';
+import 'package:path_provider/path_provider.dart';
 
 class PlayerService {
   final ApiService apiService = ApiService();
+  static const String fileName = 'player.json';
 
-  /// 🔹 Crée un nouveau joueur et stocke son ID localement
+  /// 📌 Récupère le chemin correct du fichier JSON
+  Future<File> get _localFile async {
+    // Création d'un dossier 'core' dans le répertoire temporaire de l'application
+    final directory = await getApplicationDocumentsDirectory();
+    final corePath = '${directory.path}/core';
+    await Directory(corePath).create(recursive: true);
+    return File('$corePath/$fileName');
+  }
+
+  /// 🔹 Crée un nouveau joueur et le stocke en local
   Future<PlayerModel?> createPlayer(String username) async {
     final response = await apiService.postRequest('/players', {"username": username});
 
-    if (response != null && response.containsKey('id_player')) { // ✅ Vérifie si `id_player` est bien retourné
-      PlayerModel player = PlayerModel.fromJson(response); // ✅ Utilisation du `fromJson` directement
+    print("📩 [PlayerService] Réponse API: $response"); // DEBUG
 
-      // 📌 Stocker l'ID du joueur localement
-      await _savePlayerId(player.idPlayer);
+    if (response != null && response is Map<String, dynamic> && response.containsKey('player_id')) {
+      PlayerModel player = PlayerModel.fromJson({
+        "id_player": response['player_id'],
+        "username": username,
+        "hacking_power": response['hacking_power'] ?? 1,
+        "money": response['money'] ?? 0
+      });
 
+      await savePlayerData(player); // ✅ Sauvegarde du joueur en JSON localement
+
+      print("✅ [PlayerService] Joueur créé avec ID: ${player.idPlayer}");
+      return player;
+    }
+
+    print("❌ [PlayerService] Erreur: Réponse invalide ou ID manquant.");
+    return null;
+  }
+
+  /// 🔹 Charge le joueur stocké en local
+  Future<PlayerModel?> loadStoredPlayer() async {
+    try {
+      final file = await _localFile;
+      if (await file.exists()) {
+        String contents = await file.readAsString();
+        Map<String, dynamic> json = jsonDecode(contents);
+        print("🔍 [PlayerService] Chargement joueur depuis JSON: $json");
+        return PlayerModel.fromJson(json);
+      }
+    } catch (e) {
+      print("⚠️ Erreur lors du chargement du fichier JSON: $e");
+    }
+    return null;
+  }
+
+  /// 🔹 Vérifie si un joueur est stocké en local
+  Future<bool> isPlayerStored() async {
+    final file = await _localFile;
+    return await file.exists();
+  }
+
+  /// 🔹 Récupère un joueur depuis l'API et met à jour le fichier JSON
+  Future<PlayerModel?> getPlayer(int playerId) async {
+    final response = await apiService.getRequest('/players/$playerId');
+
+    if (response != null && response is Map<String, dynamic>) {
+      PlayerModel player = PlayerModel.fromJson(response);
+      await savePlayerData(player); // ✅ Mettre à jour le fichier JSON
       return player;
     }
     return null;
   }
 
-  /// 🔹 Vérifie si un joueur est stocké localement et existe sur le serveur
-  Future<bool> isPlayerStored() async {
-    int? playerId = await getStoredPlayerId();
-    if (playerId == null) return false;
-
-    PlayerModel? player = await getPlayer(playerId);
-    return player != null; // Si on récupère bien le joueur, il existe
-  }
-
-  /// 🔹 Récupère un joueur par son ID
-  Future<PlayerModel?> getPlayer(int playerId) async {
-    final response = await apiService.getRequest('/players/$playerId');
-
-    if (response != null) {
-      return PlayerModel.fromJson(response);
-    }
-    return null;
-  }
-
-  /// 🔹 Supprime un joueur et efface son ID localement
+  /// 🔹 Supprime un joueur et efface ses données locales
   Future<bool> deletePlayer(int playerId) async {
     bool success = await apiService.deleteRequest('/players/$playerId');
     if (success) {
-      await _removePlayerId(); // Effacer l'ID localement
+      await _removePlayerData();
     }
     return success;
   }
 
-  /// 🔹 Stocke l’ID du joueur dans `SharedPreferences`
-  Future<void> _savePlayerId(int playerId) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('player_id', playerId);
+  /// 🔹 Sauvegarde le joueur dans un fichier JSON
+  Future<void> savePlayerData(PlayerModel player) async {
+    try {
+      final file = await _localFile;
+      await file.writeAsString(jsonEncode(player.toJson()));
+      print("💾 [PlayerService] Joueur sauvegardé en JSON : ${player.toJson()}");
+    } catch (e) {
+      print("⚠️ Erreur lors de l'écriture du fichier JSON: $e");
+    }
   }
 
-  /// 🔹 Récupère l’ID du joueur stocké localement
-  Future<int?> getStoredPlayerId() async {
-    final prefs = await SharedPreferences.getInstance();
-    int? playerId = prefs.getInt('player_id');
-    print("🔍 ID stocké localement: $playerId"); // DEBUG
-    return playerId;
-  }
-
-  /// 🔹 Supprime l’ID du joueur stocké
-  Future<void> _removePlayerId() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('player_id');
+  /// 🔹 Supprime le fichier JSON contenant le joueur
+  Future<void> _removePlayerData() async {
+    final file = await _localFile;
+    if (await file.exists()) {
+      await file.delete();
+      print("🗑 [PlayerService] Joueur supprimé du stockage local.");
+    }
   }
 }

@@ -8,10 +8,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env"); // Charger les variables d’environnement
 
+  final playerViewModel = PlayerViewModel();
+  await playerViewModel.loadPlayer(); // Charger le joueur avant de lancer l'application
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => PlayerViewModel()..loadPlayer()), // Charger le joueur au lancement
+        ChangeNotifierProvider(create: (context) => playerViewModel),
       ],
       child: MyApp(),
     ),

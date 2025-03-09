@@ -12,23 +12,16 @@ class PlayerViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  /// 🔹 Récupère un joueur depuis l'ID stocké localement
+  /// 🔹 Charge le joueur depuis le fichier JSON local
   Future<void> loadPlayer() async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      int? storedId = await _playerService.getStoredPlayerId();
-      if (storedId != null) {
-        PlayerModel? loadedPlayer = await _playerService.getPlayer(storedId);
-        if (loadedPlayer != null) {
-          _player = loadedPlayer;
-        } else {
-          // Si l'ID est stocké mais que le joueur est introuvable, le supprimer
-          await _playerService.deletePlayer(storedId);
-          _errorMessage = "Joueur introuvable, veuillez en créer un nouveau.";
-        }
+      PlayerModel? storedPlayer = await _playerService.loadStoredPlayer();
+      if (storedPlayer != null) {
+        _player = storedPlayer;
       } else {
         _errorMessage = "Aucun joueur enregistré.";
       }
@@ -40,9 +33,8 @@ class PlayerViewModel extends ChangeNotifier {
     }
   }
 
-
-  /// 🔹 Crée un joueur et le stocke localement
-  Future<void> createPlayer(String username) async {
+  /// 🔹 Crée un joueur et met à jour `_player`
+  Future<bool> createPlayer(String username) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -51,6 +43,8 @@ class PlayerViewModel extends ChangeNotifier {
       PlayerModel? newPlayer = await _playerService.createPlayer(username);
       if (newPlayer != null) {
         _player = newPlayer;
+        notifyListeners();
+        return true;
       } else {
         _errorMessage = "Échec de la création du joueur.";
       }
@@ -59,6 +53,18 @@ class PlayerViewModel extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+    return false;
+  }
+
+  /// 🔹 Supprime un joueur et réinitialise le ViewModel
+  Future<void> deletePlayer() async {
+    if (_player != null) {
+      bool success = await _playerService.deletePlayer(_player!.idPlayer);
+      if (success) {
+        _player = null;
+        notifyListeners();
+      }
     }
   }
 }
