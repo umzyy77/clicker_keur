@@ -9,7 +9,7 @@ class PlayerMissionService {
   Future<List<PlayerMissionModel>> getMissionsForPlayer(int playerId) async {
     final response = await apiService.getRequest('/player_missions/$playerId');
 
-    if (response != null) {
+    if (response != null && response is List) {
       return response.map((json) => PlayerMissionModel.fromJson(json)).toList();
     }
     return [];

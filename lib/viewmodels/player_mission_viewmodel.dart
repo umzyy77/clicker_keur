@@ -22,6 +22,8 @@ class PlayerMissionViewModel extends ChangeNotifier {
 
     try {
       _playerMissions = await _playerMissionService.getMissionsForPlayer(playerId);
+      print("PlayerMissions");
+      print(_playerMissions);
     } catch (e) {
       _errorMessage = "Erreur lors du chargement des missions : ${e.toString()}";
     } finally {

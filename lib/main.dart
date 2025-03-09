@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'viewmodels/mission_viewmodel.dart';
 import 'viewmodels/player_upgrade_viewmodel.dart';
 import 'viewmodels/player_mission_viewmodel.dart';
 import 'models/difficulty_model.dart';
@@ -21,6 +22,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => PlayerViewModel()..loadPlayer()), // Charger le joueur au lancement
+        ChangeNotifierProvider(create: (context) => MissionViewModel()),
         ChangeNotifierProvider(create: (context) => PlayerMissionViewModel()),
         ChangeNotifierProvider(create: (context) => PlayerUpgradeViewModel()),
       ],

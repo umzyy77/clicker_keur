@@ -20,10 +20,11 @@ class MissionViewModel extends ChangeNotifier {
   Future<void> loadMissions() async {
     _isLoading = true;
     _errorMessage = null;
-    notifyListeners();
 
     try {
       _missions = await _missionService.getAllMissions();
+      print("Missions");
+      print(_missions);
     } catch (e) {
       _errorMessage = "Erreur lors du chargement des missions : ${e.toString()}";
     } finally {
@@ -36,7 +37,6 @@ class MissionViewModel extends ChangeNotifier {
   Future<void> loadMission(int missionId) async {
     _isLoading = true;
     _errorMessage = null;
-    notifyListeners();
 
     try {
       _selectedMission = await _missionService.getMission(missionId);
@@ -52,7 +52,6 @@ class MissionViewModel extends ChangeNotifier {
   Future<void> loadMissionObjective(int missionId) async {
     _isLoading = true;
     _errorMessage = null;
-    notifyListeners();
 
     try {
       _missionObjective = await _missionService.getMissionObjective(missionId);

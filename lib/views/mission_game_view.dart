@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../viewmodels/mission_viewmodel.dart';
 import '../viewmodels/player_mission_viewmodel.dart';
 import '../viewmodels/player_upgrade_viewmodel.dart';
 import '../models/player_mission_model.dart';
@@ -22,6 +23,8 @@ class _MissionGameViewState extends State<MissionGameView> with SingleTickerProv
   @override
   void initState() {
     super.initState();
+    final missionViewModel = Provider.of<MissionViewModel>(context, listen: false);
+    missionViewModel.loadMissions();
     _animationController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 200),
@@ -31,8 +34,9 @@ class _MissionGameViewState extends State<MissionGameView> with SingleTickerProv
 
   void _incrementClicks() {
     final playerViewModel = Provider.of<PlayerViewModel>(context, listen: false);
+    final missionViewModel = Provider.of<MissionViewModel>(context, listen: false);
     Provider.of<PlayerMissionViewModel>(context, listen: false)
-        .incrementMissionClicks(widget.playerMission.mission.id, playerViewModel.player!.id);
+        .incrementMissionClicks(missionViewModel.missions[widget.playerMission.mission].id, playerViewModel.player!.id);
     _animationController.forward(from: 0.0);
   }
 
@@ -51,10 +55,11 @@ class _MissionGameViewState extends State<MissionGameView> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
-    double progress = widget.playerMission.clicksDone / widget.playerMission.mission.difficulty.clicksRequired;
+    final missionViewModel = Provider.of<MissionViewModel>(context, listen: false);
+    double progress = widget.playerMission.clicksDone / missionViewModel.missions[widget.playerMission.mission].difficulty.clicksRequired;
 
     return Scaffold(
-      appBar: AppBar(title: Text("Mission: ${widget.playerMission.mission.name}")),
+      appBar: AppBar(title: Text("Mission: ${missionViewModel.missions[widget.playerMission.mission].name}")),
       body: Stack(
         children: [
           Positioned(
@@ -62,7 +67,7 @@ class _MissionGameViewState extends State<MissionGameView> with SingleTickerProv
             left: MediaQuery.of(context).size.width / 2 - 75,
             child: Column(
               children: [
-                Text("${widget.playerMission.clicksDone} / ${widget.playerMission.mission.difficulty.clicksRequired}",
+                Text("${widget.playerMission.clicksDone} / ${missionViewModel.missions[widget.playerMission.mission].difficulty.clicksRequired}",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 SizedBox(height: 5),
                 SizedBox(
@@ -87,7 +92,7 @@ class _MissionGameViewState extends State<MissionGameView> with SingleTickerProv
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  Image.asset(getMissionImage(widget.playerMission.mission.id), width: 300),
+                  Image.asset(getMissionImage(missionViewModel.missions[widget.playerMission.mission].id), width: 300),
                   FadeTransition(
                     opacity: _animation,
                     child: Icon(Icons.flash_on, color: Colors.blueAccent, size: 50),

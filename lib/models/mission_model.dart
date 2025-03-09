@@ -17,11 +17,11 @@ class MissionModel {
 
   factory MissionModel.fromJson(Map<String, dynamic> json) {
     return MissionModel(
-      id: json['id'],
+      id: json['id_mission'],
       name: json['name'],
       rewardMoney: json['reward_money'],
       rewardPower: json['reward_power'],
-      difficulty: DifficultyModel.fromJson(json['difficulty']),
+      difficulty: DifficultyModel.fromJson(json['id_difficulty']),
     );
   }
 

@@ -3,9 +3,9 @@ import 'mission_model.dart';
 import 'status_model.dart';
 
 class PlayerMissionModel {
-  final PlayerModel player;
-  final MissionModel mission;
-  final StatusModel status;
+  final int player;
+  final int mission;
+  final int status;
   final int clicksDone;
 
   PlayerMissionModel({
@@ -17,18 +17,18 @@ class PlayerMissionModel {
 
   factory PlayerMissionModel.fromJson(Map<String, dynamic> json) {
     return PlayerMissionModel(
-      player: PlayerModel.fromJson(json['player']),
-      mission: MissionModel.fromJson(json['mission']),
-      status: StatusModel.fromJson(json['status']),
+      player: json['id_player'],
+      mission: json['id_mission'],
+      status: json['id_status'],
       clicksDone: json['clicks_done'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      "player": player.toJson(),
-      "mission": mission.toJson(),
-      "status": status.toJson(),
+      "player": player,
+      "mission": mission,
+      "status": status,
       "clicks_done": clicksDone,
     };
   }
