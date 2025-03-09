@@ -5,7 +5,7 @@ class MissionModel {
   final String name;
   final int rewardMoney;
   final int rewardPower;
-  final DifficultyModel difficulty;
+  final int difficulty;
 
   MissionModel({
     required this.id,
@@ -21,17 +21,17 @@ class MissionModel {
       name: json['name'],
       rewardMoney: json['reward_money'],
       rewardPower: json['reward_power'],
-      difficulty: DifficultyModel.fromJson(json['id_difficulty']),
+      difficulty: json['id_difficulty'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      "id": id,
+      "id_mission": id,
       "name": name,
       "reward_money": rewardMoney,
       "reward_power": rewardPower,
-      "difficulty": difficulty.toJson(),
+      "id_difficulty": difficulty,
     };
   }
 }

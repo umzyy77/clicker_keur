@@ -11,9 +11,13 @@ class MissionViewModel extends ChangeNotifier {
   String? _errorMessage;
 
   List<MissionModel> get missions => _missions;
+
   MissionModel? get selectedMission => _selectedMission;
+
   int? get missionObjective => _missionObjective;
+
   bool get isLoading => _isLoading;
+
   String? get errorMessage => _errorMessage;
 
   /// 🔹 Récupère toutes les missions disponibles
@@ -23,10 +27,9 @@ class MissionViewModel extends ChangeNotifier {
 
     try {
       _missions = await _missionService.getAllMissions();
-      print("Missions");
-      print(_missions);
     } catch (e) {
-      _errorMessage = "Erreur lors du chargement des missions : ${e.toString()}";
+      _errorMessage =
+          "Erreur lors du chargement des missions : ${e.toString()}";
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -41,7 +44,8 @@ class MissionViewModel extends ChangeNotifier {
     try {
       _selectedMission = await _missionService.getMission(missionId);
     } catch (e) {
-      _errorMessage = "Erreur lors du chargement de la mission : ${e.toString()}";
+      _errorMessage =
+          "Erreur lors du chargement de la mission : ${e.toString()}";
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -56,10 +60,19 @@ class MissionViewModel extends ChangeNotifier {
     try {
       _missionObjective = await _missionService.getMissionObjective(missionId);
     } catch (e) {
-      _errorMessage = "Erreur lors du chargement de l’objectif de mission : ${e.toString()}";
+      _errorMessage =
+          "Erreur lors du chargement de l’objectif de mission : ${e.toString()}";
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  MissionModel? getMissionById(int missionId) {
+    try {
+      return _missions.firstWhere((mission) => mission.id == missionId);
+    } catch (e) {
+      return null;
     }
   }
 }

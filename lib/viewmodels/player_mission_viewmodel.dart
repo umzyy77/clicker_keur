@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled1/core/services/mission_service.dart';
 import '../models/player_mission_model.dart';
 import '../core/services/player_mission_service.dart';
 
@@ -19,11 +20,8 @@ class PlayerMissionViewModel extends ChangeNotifier {
     _isLoading = true;
     _errorMessage = null;
 
-
     try {
       _playerMissions = await _playerMissionService.getMissionsForPlayer(playerId);
-      print("PlayerMissions");
-      print(_playerMissions);
     } catch (e) {
       _errorMessage = "Erreur lors du chargement des missions : ${e.toString()}";
     } finally {
