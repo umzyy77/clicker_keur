@@ -1,4 +1,3 @@
-import 'package:shared_preferences/shared_preferences.dart';
 import './api_service.dart';
 import '../../models/player_mission_model.dart';
 
@@ -29,11 +28,7 @@ class PlayerMissionService {
   Future<bool> startMission(int playerId, int missionId) async {
     final response = await apiService.postRequest('/player_missions/$playerId/start', {"mission_id": missionId});
 
-    if (response is Map<String, dynamic> && response.containsKey('message')) {
-      await _saveCurrentMissionId(missionId);
-      return true;
-    }
-    return false;
+    return response is Map<String, dynamic> && response.containsKey('message');
   }
 
   /// 🔹 Vérifie si une nouvelle mission a été débloquée
@@ -52,24 +47,5 @@ class PlayerMissionService {
       '/player_missions/$playerId/increment',
       {"mission_id": missionId},
     );
-  }
-
-
-  /// 🔹 Stocke localement l'ID de la mission en cours
-  Future<void> _saveCurrentMissionId(int missionId) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('current_mission_id', missionId);
-  }
-
-  /// 🔹 Récupère l’ID de la mission en cours
-  Future<int?> getStoredMissionId() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getInt('current_mission_id');
-  }
-
-  /// 🔹 Supprime l’ID de la mission en cours
-  Future<void> clearCurrentMissionId() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('current_mission_id');
   }
 }

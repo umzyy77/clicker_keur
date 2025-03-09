@@ -28,4 +28,6 @@ class PlayerModel {
       "money": money,
     };
   }
+
+  int get id => idPlayer;
 }
