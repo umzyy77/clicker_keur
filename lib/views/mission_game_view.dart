@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/player_mission_viewmodel.dart';
+import '../viewmodels/player_upgrade_viewmodel.dart';
 import '../models/player_mission_model.dart';
 import '../models/upgrade_level_model.dart';
 
@@ -33,6 +34,19 @@ class _MissionGameViewState extends State<MissionGameView> with SingleTickerProv
     _animationController.forward(from: 0.0);
   }
 
+  String getMissionImage(int missionId) {
+    switch (missionId) {
+      case 1:
+        return 'assets/serveur.png';
+      case 2:
+        return 'assets/banque.png';
+      case 3:
+        return 'assets/gouvernement.png';
+      default:
+        return 'assets/default.png';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double progress = widget.playerMission.clicksDone / widget.playerMission.mission.difficulty.clicksRequired;
@@ -57,14 +71,49 @@ class _MissionGameViewState extends State<MissionGameView> with SingleTickerProv
             ),
           ),
           Positioned(
+            bottom: 120,
+            left: 50,
+            child: Column(
+              children: [
+                Icon(Icons.person, size: 50, color: Colors.white),
+                Text("Player"),
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: 80,
+            left: MediaQuery.of(context).size.width / 2 - 50,
+            child: Column(
+              children: [
+                Icon(Icons.computer, size: 50, color: Colors.white),
+                Text("PC"),
+              ],
+            ),
+          ),
+          Center(
+            child: GestureDetector(
+              onTap: _incrementClicks,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Image.asset(getMissionImage(widget.playerMission.mission.id), width: 150),
+                  FadeTransition(
+                    opacity: _animation,
+                    child: Icon(Icons.flash_on, color: Colors.blueAccent, size: 50),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Positioned(
             bottom: 50,
             left: 20,
             right: 20,
             child: Consumer<PlayerUpgradeViewModel>(
               builder: (context, viewModel, child) {
-                List<UpgradeLevelModel> playerUpgrades = viewModel.playerUpgrades;
+                List<UpgradeLevelModel>? playerUpgrades = viewModel.playerUpgrades;
 
-                if (playerUpgrades.isEmpty) {
+                if (playerUpgrades!.isEmpty) {
                   return Center(
                     child: Text("Aucune amélioration disponible", style: TextStyle(color: Colors.white70)),
                   );
@@ -114,3 +163,4 @@ class _MissionGameViewState extends State<MissionGameView> with SingleTickerProv
     );
   }
 }
+
