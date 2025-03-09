@@ -1,17 +1,17 @@
 class DifficultyModel {
-  final int id;
+  final int idDifficulty;
   final String label;
   final int clicksRequired;
 
   DifficultyModel({
-    required this.id,
+    required this.idDifficulty,
     required this.label,
     required this.clicksRequired,
   });
 
   factory DifficultyModel.fromJson(Map<String, dynamic> json) {
     return DifficultyModel(
-      id: json['id'],
+      idDifficulty: json['id_difficulty'],
       label: json['label'],
       clicksRequired: json['clicks_required'],
     );
@@ -19,7 +19,7 @@ class DifficultyModel {
 
   Map<String, dynamic> toJson() {
     return {
-      "id": id,
+      "id_difficulty": idDifficulty,
       "label": label,
       "clicks_required": clicksRequired,
     };

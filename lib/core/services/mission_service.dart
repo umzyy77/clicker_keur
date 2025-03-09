@@ -4,8 +4,6 @@ import '../../models/mission_model.dart';
 class MissionService {
   final ApiService apiService = ApiService();
 
-  ///methodes pas trop utiles pour le moment
-
   /// 🔹 Récupère toutes les missions disponibles du jeu mais pas du joueur
   Future<List<MissionModel>> getAllMissions() async {
     final response = await apiService.getRequest('/missions');
@@ -30,7 +28,7 @@ class MissionService {
   Future<int?> getMissionObjective(int missionId) async {
     final response = await apiService.getRequest('/missions/$missionId/objective');
 
-    if (response != null && response.containsKey('clicks_required')) {
+    if (response != null) {
       return response['clicks_required'];
     }
     return null;

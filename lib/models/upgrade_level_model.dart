@@ -1,14 +1,14 @@
 import 'upgrade_model.dart';
 
 class UpgradeLevelModel {
-  final int id;
+  final int idLevel;
   final int level;
   final int cost;
   final int boostValue;
   final UpgradeModel upgrade;
 
   UpgradeLevelModel({
-    required this.id,
+    required this.idLevel,
     required this.level,
     required this.cost,
     required this.boostValue,
@@ -17,17 +17,20 @@ class UpgradeLevelModel {
 
   factory UpgradeLevelModel.fromJson(Map<String, dynamic> json) {
     return UpgradeLevelModel(
-      id: json['id'],
+      idLevel: json['id_level'],
       level: json['level'],
       cost: json['cost'],
       boostValue: json['boost_value'],
-      upgrade: UpgradeModel.fromJson(json['upgrade']),
+      upgrade: UpgradeModel.fromJson({
+        "id_upgrade": json['id_upgrade'],
+        "name": json['name'],
+      }),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      "id": id,
+      "id_level": idLevel,
       "level": level,
       "cost": cost,
       "boost_value": boostValue,

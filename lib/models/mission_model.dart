@@ -1,14 +1,14 @@
 import 'difficulty_model.dart';
 
 class MissionModel {
-  final int id;
+  final int idMission;
   final String name;
   final int rewardMoney;
   final int rewardPower;
   final DifficultyModel difficulty;
 
   MissionModel({
-    required this.id,
+    required this.idMission,
     required this.name,
     required this.rewardMoney,
     required this.rewardPower,
@@ -17,17 +17,21 @@ class MissionModel {
 
   factory MissionModel.fromJson(Map<String, dynamic> json) {
     return MissionModel(
-      id: json['id'],
+      idMission: json['id_mission'],
       name: json['name'],
       rewardMoney: json['reward_money'],
       rewardPower: json['reward_power'],
-      difficulty: DifficultyModel.fromJson(json['difficulty']),
+      difficulty: DifficultyModel.fromJson({
+        "id_difficulty": json['id_difficulty'],
+        "label": json['difficulty_label'],
+        "clicks_required": json['clicks_required'],
+      }),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      "id": id,
+      "id_mission": idMission,
       "name": name,
       "reward_money": rewardMoney,
       "reward_power": rewardPower,

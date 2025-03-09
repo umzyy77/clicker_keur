@@ -5,51 +5,55 @@ import '../../models/player_mission_model.dart';
 class PlayerMissionService {
   final ApiService apiService = ApiService();
 
-  /// 🔹 Récupère toutes les missions d'un joueur pour le menu ou autre
+  /// 🔹 Récupère toutes les missions d'un joueur
   Future<List<PlayerMissionModel>> getMissionsForPlayer(int playerId) async {
     final response = await apiService.getRequest('/player_missions/$playerId');
 
-    if (response != null && response is List) {
+    if (response is List) {
       return response.map((json) => PlayerMissionModel.fromJson(json)).toList();
     }
     return [];
   }
 
-  /// 🔹 Récupère la première mission déverrouillée d’un joueur (methode pas trop utile)
+  /// 🔹 Récupère la première mission déverrouillée d’un joueur
   Future<int?> getFirstUnlockedMission(int playerId) async {
     final response = await apiService.getRequest('/player_missions/$playerId/first_unlocked');
 
-    if (response != null && response.containsKey('first_unlocked_mission')) {
+    if (response is Map<String, dynamic> && response.containsKey('first_unlocked_mission')) {
       return response['first_unlocked_mission'];
     }
     return null;
   }
 
-  /// 🔹 Démarre une mission pour le joueur et stocke localement son ID + le status de la mission deviens "in_progress"
+  /// 🔹 Démarre une mission pour le joueur
   Future<bool> startMission(int playerId, int missionId) async {
     final response = await apiService.postRequest('/player_missions/$playerId/start', {"mission_id": missionId});
 
-    if (response != null) {
+    if (response is Map<String, dynamic> && response.containsKey('message')) {
       await _saveCurrentMissionId(missionId);
       return true;
     }
     return false;
   }
 
-  /// 🔹 Vérifie si une nouvelle mission a été débloquée pour l'animation du cadenas debloqué au menu ou autre animation
+  /// 🔹 Vérifie si une nouvelle mission a été débloquée
   Future<int?> checkNewlyUnlockedMission(int playerId) async {
     final response = await apiService.getRequest('/player_missions/$playerId/newly_unlocked');
 
-    if (response != null && response.containsKey('id_mission')) {
+    if (response is Map<String, dynamic> && response.containsKey('id_mission')) {
       return response['id_mission'];
     }
     return null;
   }
 
-  /// 🔹 Incrémente les clics d’une mission et sa logique de gameloop à envoie à l’API
+  /// 🔹 Incrémente les clics d’une mission
   Future<bool> incrementClicks(int playerId, int missionId) async {
-    return await apiService.patchRequest('/player_missions/$playerId/increment', {"mission_id": missionId});
+    return await apiService.patchRequest(
+      '/player_missions/$playerId/increment',
+      {"mission_id": missionId},
+    );
   }
+
 
   /// 🔹 Stocke localement l'ID de la mission en cours
   Future<void> _saveCurrentMissionId(int missionId) async {
@@ -57,13 +61,13 @@ class PlayerMissionService {
     await prefs.setInt('current_mission_id', missionId);
   }
 
-  /// 🔹 Récupère l’ID de la mission en cours (si existant)
+  /// 🔹 Récupère l’ID de la mission en cours
   Future<int?> getStoredMissionId() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt('current_mission_id');
   }
 
-  /// 🔹 Supprime l’ID de la mission en cours (si terminée ou annulée)
+  /// 🔹 Supprime l’ID de la mission en cours
   Future<void> clearCurrentMissionId() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('current_mission_id');

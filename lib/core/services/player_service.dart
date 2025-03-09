@@ -9,20 +9,24 @@ class PlayerService {
   Future<PlayerModel?> createPlayer(String username) async {
     final response = await apiService.postRequest('/players', {"username": username});
 
-    if (response != null && response.containsKey('player_id')) {
-      PlayerModel player = PlayerModel(
-        id: response['player_id'],
-        username: username,
-        hackingPower: 1,
-        money: 0,
-      );
+    if (response != null && response.containsKey('id_player')) { // ✅ Vérifie si `id_player` est bien retourné
+      PlayerModel player = PlayerModel.fromJson(response); // ✅ Utilisation du `fromJson` directement
 
-      // 📌 Stocker l'ID du joueur
-      await _savePlayerId(player.id);
+      // 📌 Stocker l'ID du joueur localement
+      await _savePlayerId(player.idPlayer);
 
       return player;
     }
     return null;
+  }
+
+  /// 🔹 Vérifie si un joueur est stocké localement et existe sur le serveur
+  Future<bool> isPlayerStored() async {
+    int? playerId = await getStoredPlayerId();
+    if (playerId == null) return false;
+
+    PlayerModel? player = await getPlayer(playerId);
+    return player != null; // Si on récupère bien le joueur, il existe
   }
 
   /// 🔹 Récupère un joueur par son ID
@@ -39,7 +43,7 @@ class PlayerService {
   Future<bool> deletePlayer(int playerId) async {
     bool success = await apiService.deleteRequest('/players/$playerId');
     if (success) {
-      await _removePlayerId();  // Efface l'ID localement
+      await _removePlayerId(); // Effacer l'ID localement
     }
     return success;
   }
@@ -50,14 +54,13 @@ class PlayerService {
     await prefs.setInt('player_id', playerId);
   }
 
-  /// 🔹 Récupère l’ID du joueur stocké
+  /// 🔹 Récupère l’ID du joueur stocké localement
   Future<int?> getStoredPlayerId() async {
     final prefs = await SharedPreferences.getInstance();
     int? playerId = prefs.getInt('player_id');
     print("🔍 ID stocké localement: $playerId"); // DEBUG
     return playerId;
   }
-
 
   /// 🔹 Supprime l’ID du joueur stocké
   Future<void> _removePlayerId() async {
