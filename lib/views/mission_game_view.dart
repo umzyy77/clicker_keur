@@ -30,7 +30,7 @@ class _MissionGameViewState extends State<MissionGameView> with SingleTickerProv
 
   void _incrementClicks() {
     Provider.of<PlayerMissionViewModel>(context, listen: false)
-        .incrementClicks(widget.playerMission.mission.id);
+        .incrementMissionClicks(widget.playerMission.mission.id, 1);
     _animationController.forward(from: 0.0);
   }
 
