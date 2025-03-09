@@ -60,6 +60,7 @@ class UpgradeView extends StatelessWidget {
                             ),
                           ),
                         ),
+                        //
                         if (!isUnlocked)
                           const Icon(Icons.lock, color: Colors.white, size: 30),
                       ],

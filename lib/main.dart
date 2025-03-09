@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
       title: 'Hacking Clicker',
       theme: ThemeData.dark(),
       home: Consumer<PlayerViewModel>(
+        //
         builder: (context, playerViewModel, child) {
           if (playerViewModel.isLoading) {
             return const SplashScreen();
