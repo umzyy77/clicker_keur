@@ -23,7 +23,8 @@ class PlayerCreatedView extends StatelessWidget {
             Text("💰 Argent : ${playerViewModel.player?.money}"),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                await playerViewModel.loadPlayer(); // Ajout de cette ligne
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => HomeView()),

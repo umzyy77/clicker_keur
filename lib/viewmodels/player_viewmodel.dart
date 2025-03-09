@@ -25,7 +25,6 @@ class PlayerViewModel extends ChangeNotifier {
         if (loadedPlayer != null) {
           _player = loadedPlayer;
         } else {
-          // Si l'ID est stocké mais que le joueur est introuvable, le supprimer
           await _playerService.deletePlayer(storedId);
           _errorMessage = "Joueur introuvable, veuillez en créer un nouveau.";
         }
@@ -40,7 +39,6 @@ class PlayerViewModel extends ChangeNotifier {
     }
   }
 
-
   /// 🔹 Crée un joueur et le stocke localement
   Future<void> createPlayer(String username) async {
     _isLoading = true;
@@ -51,6 +49,8 @@ class PlayerViewModel extends ChangeNotifier {
       PlayerModel? newPlayer = await _playerService.createPlayer(username);
       if (newPlayer != null) {
         _player = newPlayer;
+        await loadPlayer(); // 🔹 Recharge immédiatement les données du joueur
+        print("✅ Joueur créé et stocké : ${_player?.username}, ID: ${_player?.id}");
       } else {
         _errorMessage = "Échec de la création du joueur.";
       }
