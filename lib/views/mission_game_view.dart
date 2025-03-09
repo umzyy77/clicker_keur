@@ -75,18 +75,7 @@ class _MissionGameViewState extends State<MissionGameView> with SingleTickerProv
             left: 50,
             child: Column(
               children: [
-                Icon(Icons.person, size: 50, color: Colors.white),
-                Text("Player"),
-              ],
-            ),
-          ),
-          Positioned(
-            bottom: 80,
-            left: MediaQuery.of(context).size.width / 2 - 50,
-            child: Column(
-              children: [
-                Icon(Icons.computer, size: 50, color: Colors.white),
-                Text("PC"),
+                Image.asset('assets/hacker.png', width: 150),
               ],
             ),
           ),
@@ -96,7 +85,7 @@ class _MissionGameViewState extends State<MissionGameView> with SingleTickerProv
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  Image.asset(getMissionImage(widget.playerMission.mission.id), width: 150),
+                  Image.asset(getMissionImage(widget.playerMission.mission.id), width: 300),
                   FadeTransition(
                     opacity: _animation,
                     child: Icon(Icons.flash_on, color: Colors.blueAccent, size: 50),
@@ -112,26 +101,29 @@ class _MissionGameViewState extends State<MissionGameView> with SingleTickerProv
             child: Consumer<PlayerUpgradeViewModel>(
               builder: (context, viewModel, child) {
                 List<UpgradeLevelModel>? playerUpgrades = viewModel.playerUpgrades;
-
-                if (playerUpgrades!.isEmpty) {
-                  return Center(
-                    child: Text("Aucune amélioration disponible", style: TextStyle(color: Colors.white70)),
-                  );
-                }
+                bool allLocked = playerUpgrades!.every((upgrade) => upgrade.level == 0);
 
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: playerUpgrades.map((upgrade) {
+                    double opacity = allLocked ? 0.3 : (upgrade.level > 0 ? 1.0 : 0.3);
+
                     return Column(
                       children: [
                         Container(
                           width: 80,
                           height: 100,
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(upgrade.level > 0 ? 1.0 : 0.3),
+                            color: Colors.white.withOpacity(opacity),
                             border: Border.all(color: Colors.black),
                           ),
-                          child: Center(child: Text(upgrade.upgrade.name, textAlign: TextAlign.center)),
+                          child: Center(
+                            child: Text(
+                              upgrade.upgrade.name,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.black.withOpacity(opacity)),
+                            ),
+                          ),
                         ),
                         SizedBox(height: 5),
                         Row(
@@ -144,7 +136,7 @@ class _MissionGameViewState extends State<MissionGameView> with SingleTickerProv
                                 width: 20,
                                 height: 5,
                                 decoration: BoxDecoration(
-                                  color: isUnlocked ? Colors.black : Colors.black.withOpacity(0.3),
+                                  color: isUnlocked ? Colors.black : Colors.black.withOpacity(opacity),
                                   borderRadius: BorderRadius.circular(2),
                                 ),
                               ),
@@ -157,7 +149,7 @@ class _MissionGameViewState extends State<MissionGameView> with SingleTickerProv
                 );
               },
             ),
-          ),
+          )
         ],
       ),
     );
