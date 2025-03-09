@@ -18,7 +18,7 @@ class PlayerMissionViewModel extends ChangeNotifier {
   Future<void> loadPlayerMissions(int playerId) async {
     _isLoading = true;
     _errorMessage = null;
-    notifyListeners();
+
 
     try {
       _playerMissions = await _playerMissionService.getMissionsForPlayer(playerId);
@@ -34,7 +34,6 @@ class PlayerMissionViewModel extends ChangeNotifier {
   Future<void> startMission(int playerId, int missionId) async {
     _isLoading = true;
     _errorMessage = null;
-    notifyListeners();
 
     try {
       bool success = await _playerMissionService.startMission(playerId, missionId);

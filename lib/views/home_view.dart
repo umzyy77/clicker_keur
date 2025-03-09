@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:untitled1/views/mission_game_view.dart';
 import '../viewmodels/player_viewmodel.dart';
 import '../viewmodels/player_mission_viewmodel.dart';
 
@@ -52,7 +53,7 @@ class _HomeViewState extends State<HomeView> {
             playerMissionViewModel.isLoading
                 ? CircularProgressIndicator()
                 : playerMissionViewModel.playerMissions.isEmpty
-                ? Text("Aucune mission disponible")
+                ? Text(playerMissionViewModel.playerMissions.toString())
                 : Expanded(
               child: ListView.builder(
                 itemCount: playerMissionViewModel.playerMissions.length,
@@ -64,7 +65,14 @@ class _HomeViewState extends State<HomeView> {
                       subtitle: Text("Récompense : 💰 ${mission.rewardMoney} | ⚡ ${mission.rewardPower}"),
                       trailing: ElevatedButton(
                         onPressed: () {
-                          // Gérer le lancement dans une autre étape
+                          playerMissionViewModel.startMission(playerViewModel.player!.id, mission.id);
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (_) =>
+                                MissionGameView(
+                                    playerMission: playerMissionViewModel
+                                        .playerMissions[index])),
+                          );
                         },
                         child: Text("Lancer"),
                       ),

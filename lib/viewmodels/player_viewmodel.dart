@@ -16,7 +16,6 @@ class PlayerViewModel extends ChangeNotifier {
   Future<void> loadPlayer() async {
     _isLoading = true;
     _errorMessage = null;
-    notifyListeners();
 
     try {
       int? storedId = await _playerService.getStoredPlayerId();
@@ -43,14 +42,12 @@ class PlayerViewModel extends ChangeNotifier {
   Future<void> createPlayer(String username) async {
     _isLoading = true;
     _errorMessage = null;
-    notifyListeners();
 
     try {
       PlayerModel? newPlayer = await _playerService.createPlayer(username);
       if (newPlayer != null) {
         _player = newPlayer;
         await loadPlayer(); // 🔹 Recharge immédiatement les données du joueur
-        print("✅ Joueur créé et stocké : ${_player?.username}, ID: ${_player?.id}");
       } else {
         _errorMessage = "Échec de la création du joueur.";
       }

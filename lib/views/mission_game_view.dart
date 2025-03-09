@@ -4,6 +4,7 @@ import '../viewmodels/player_mission_viewmodel.dart';
 import '../viewmodels/player_upgrade_viewmodel.dart';
 import '../models/player_mission_model.dart';
 import '../models/upgrade_level_model.dart';
+import '../viewmodels/player_viewmodel.dart';
 
 class MissionGameView extends StatefulWidget {
   final PlayerMissionModel playerMission;
@@ -29,8 +30,9 @@ class _MissionGameViewState extends State<MissionGameView> with SingleTickerProv
   }
 
   void _incrementClicks() {
+    final playerViewModel = Provider.of<PlayerViewModel>(context, listen: false);
     Provider.of<PlayerMissionViewModel>(context, listen: false)
-        .incrementMissionClicks(widget.playerMission.mission.id, 1);
+        .incrementMissionClicks(widget.playerMission.mission.id, playerViewModel.player!.id);
     _animationController.forward(from: 0.0);
   }
 

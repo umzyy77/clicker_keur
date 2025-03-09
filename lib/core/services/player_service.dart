@@ -54,7 +54,6 @@ class PlayerService {
   Future<int?> getStoredPlayerId() async {
     final prefs = await SharedPreferences.getInstance();
     int? playerId = prefs.getInt('player_id');
-    print("🔍 ID stocké localement: $playerId"); // DEBUG
     return playerId;
   }
 
