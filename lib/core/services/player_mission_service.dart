@@ -48,8 +48,21 @@ class PlayerMissionService {
 
   /// 🔹 Incrémente les clics d’une mission et sa logique de gameloop à envoie à l’API
   Future<bool> incrementClicks(int playerId, int missionId) async {
-    return await apiService.patchRequest('/player_missions/$playerId/increment', {"mission_id": missionId});
+    final response = await apiService.patchRequest(
+        '/player_missions/$playerId/increment',
+        {"mission_id": missionId}
+    );
+
+    print("📡 Réponse API (incrémentation) : $response");
+
+    if (response == null) {
+      print("❌ Erreur : Aucune réponse de l'API !");
+      return false;
+    }
+
+    return response;  // Si l'API retourne `true/false`, on l'utilise directement.
   }
+
 
   /// 🔹 Stocke localement l'ID de la mission en cours
   Future<void> _saveCurrentMissionId(int missionId) async {

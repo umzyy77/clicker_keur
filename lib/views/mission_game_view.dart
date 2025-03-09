@@ -36,14 +36,13 @@ class _MissionGameViewState extends State<MissionGameView>
         CurvedAnimation(parent: _animationController, curve: Curves.easeOut);
   }
 
-  void _incrementClicks() {
-    final playerViewModel =
-        Provider.of<PlayerViewModel>(context, listen: false);
-    Provider.of<PlayerMissionViewModel>(context, listen: false)
-        .incrementMissionClicks(playerViewModel.player!.id,
-        widget.playerMission.mission);
+  Future<void> _incrementClicks() async {
+    final playerViewModel = Provider.of<PlayerViewModel>(context, listen: false);
+    await Provider.of<PlayerMissionViewModel>(context, listen: false)
+        .incrementMissionClicks(playerViewModel.player!.id, widget.playerMission.mission);
     _animationController.forward(from: 0.0);
   }
+
 
   String getMissionImage(int missionId) {
     switch (missionId) {
