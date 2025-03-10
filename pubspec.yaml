@@ -40,4 +40,5 @@ flutter:
     - assets/hacker.png
     - assets/player.json
     - assets/laptop.png
+    - assets/lightning.json
 

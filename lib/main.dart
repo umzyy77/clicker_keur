@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'models/lightning_model.dart';
+import 'viewmodels/lightning_viewmodel.dart';
 import 'viewmodels/mission_viewmodel.dart';
 import 'viewmodels/player_upgrade_viewmodel.dart';
 import 'viewmodels/player_mission_viewmodel.dart';
@@ -25,6 +27,13 @@ void main() async {
         ChangeNotifierProvider(create: (context) => MissionViewModel()),
         ChangeNotifierProvider(create: (context) => PlayerMissionViewModel()),
         ChangeNotifierProvider(create: (context) => PlayerUpgradeViewModel()),
+        ChangeNotifierProvider(create: (context) => LightningViewModel(
+            lightningModel: LightningModel(
+              animationPath: 'assets/lightning.json',
+            ),
+          ),
+        ),
+
       ],
       child: MyApp(),
     ),
