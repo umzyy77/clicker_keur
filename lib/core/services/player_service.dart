@@ -19,15 +19,13 @@ class PlayerService {
   Future<PlayerModel?> createPlayer(String username) async {
     final response = await apiService.postRequest('/players', {"username": username});
 
-    print("📩 [PlayerService] Réponse API: $response"); // DEBUG
+    print("📩 [PlayerService] Réponse API: $response");
 
     if (response != null && response.containsKey('player_id')) {
       int playerId = response['player_id'];
 
-      // Sauvegarde uniquement l'ID
       await savePlayerId(playerId);
 
-      // Charger immédiatement les infos complètes du joueur
       PlayerModel? player = await getPlayer(playerId);
 
       if (player != null) {

@@ -9,7 +9,7 @@ class PlayerMissionService {
     final response = await apiService.getRequest('/player_missions/$playerId');
 
     if (response is List) {
-      print("📋 Missions du joueur (réponse API) : $response"); // 🔍 DEBUG
+      print("📋 Missions du joueur (réponse API) : $response");
       return response.map((json) => PlayerMissionModel.fromJson(json)).toList();
     }
 

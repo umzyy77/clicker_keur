@@ -1,16 +1,22 @@
+import '../../models/upgrade_full_model.dart';
 import './api_service.dart';
-import '../../models/player_upgrade_model.dart';
 
 class UpgradeService {
   final ApiService apiService = ApiService();
 
-  /// 🔹 Récupère toutes les améliorations possibles pour un joueur avec leur niveau actuel
+  /// 🔹 Récupère toutes les améliorations disponibles et les convertit en objets `PlayerUpgradeModel`
   Future<List<PlayerUpgradeModel>> getAllUpgrades(int playerId) async {
     final response = await apiService.getRequest('/upgrades/$playerId');
 
     if (response is List) {
-      return response.map((json) => PlayerUpgradeModel.fromJson(json)).toList();
+      print("📜 Réponse API : $response");
+
+      return response.map((json) {
+        return PlayerUpgradeModel.fromJson(json);
+      }).toList();
     }
+
+    print("❌ Erreur: réponse API inattendue : $response");
     return [];
   }
 
@@ -25,12 +31,14 @@ class UpgradeService {
   }
 
   /// 🔹 Achète une amélioration pour le joueur
-  Future<PlayerUpgradeModel?> buyUpgrade(int playerId, int upgradeId) async {
+  Future<bool> buyUpgrade(int playerId, int upgradeId) async {
     final response = await apiService.postRequest('/upgrades/$playerId/buy', {"upgrade_id": upgradeId});
 
-    if (response != null && response is Map<String, dynamic>) {
-      return PlayerUpgradeModel.fromJson(response);
+    if (response != null && response is Map<String, dynamic> && response.containsKey('message')) {
+      print("✅ Amélioration achetée avec succès !");
+      return true;
     }
-    return null;
+    print("❌ Échec de l'achat de l'amélioration.");
+    return false;
   }
 }
