@@ -28,7 +28,12 @@ class MissionEnnemy extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Image.asset(getMissionImage(), width: 300),
+          Image.asset(
+            getMissionImage(),
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          ),
         ],
       ),
     );

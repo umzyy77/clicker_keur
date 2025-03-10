@@ -15,27 +15,27 @@ class MissionClickButton extends StatelessWidget {
     return Stack(
       alignment: Alignment.center,
       children: [
-        // Laptop cliquable
+        // Bouton cliquable
         Positioned(
-          top: 400,
+          bottom: 50, // Ajuste la position
           child: GestureDetector(
             onTap: () {
-              lightningViewModel.triggerLightning(); // Joue un nouvel éclair
-              onTap(); // Exécute l'action
+              lightningViewModel.triggerLightning(); // Ajoute un éclair immédiatement
+              onTap(); // Exécute l’action associée au clic
             },
             child: Image.asset(
-              'assets/laptop.png',
-              width: 100,
+              'assets/player.png',
+              width: 200,
             ),
           ),
         ),
 
-        // Afficher plusieurs éclairs actifs
-        ...lightningViewModel.activeLightnings.map((lightning) {
+        // Afficher plusieurs éclairs simultanément
+        ...lightningViewModel.activeLightnings.map((id) {
           return Positioned(
-            top: lightning["position"].dy,
+            bottom: 50 + 100,
             child: Transform.rotate(
-              angle: -3.14 * 3 / 4, // -135° de rotation
+              angle: -3.14 * 3 / 4, // Rotation -135°
               child: Lottie.asset(
                 'assets/lightning.json',
                 width: 150,
@@ -44,7 +44,7 @@ class MissionClickButton extends StatelessWidget {
               ),
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }

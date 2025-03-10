@@ -106,15 +106,16 @@ class _MissionGameViewState extends State<MissionGameView>
       appBar: AppBar(title: Text("Mission en cours")),
       body: Stack(
         children: [
+          MissionEnnemy(missionId: _currentMission.mission),
           MissionProgressBar(
             clicksDone: _currentMission.clicksDone,
             clicksRequired: clicksRequired,
           ),
-          MissionEnnemy(missionId: _currentMission.mission),
           MissionClickButton(
             onTap: _isMissionComplete ? () {} : () => _incrementClicks(),
           ),
         ],
+
       ),
     );
   }

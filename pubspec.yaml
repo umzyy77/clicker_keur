@@ -38,6 +38,7 @@ flutter:
     - assets/banque.png
     - assets/gouvernement.png
     - assets/hacker.png
+    - assets/player.png
     - assets/player.json
     - assets/laptop.png
     - assets/lightning.json
