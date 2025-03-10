@@ -50,7 +50,6 @@ class MissionViewModel extends ChangeNotifier {
     try {
       _selectedMission = await _missionService.getMission(missionId);
       await loadMissionObjective(missionId);
-      print(_missionObjective);
     } catch (e) {
       _errorMessage =
           "Erreur lors du chargement de la mission : ${e.toString()}";
@@ -67,6 +66,7 @@ class MissionViewModel extends ChangeNotifier {
 
     try {
       _missionObjective = await _missionService.getMissionObjective(missionId);
+      print(missionObjective);
     } catch (e) {
       _errorMessage =
           "Erreur lors du chargement de l’objectif de mission : ${e.toString()}";
@@ -97,6 +97,10 @@ class MissionViewModel extends ChangeNotifier {
       print("❌ Mission introuvable pour l'ID : $missionId");
       return null;
     }
+  }
+
+  int? getObjective(){
+    return _missionObjective;
   }
 
 

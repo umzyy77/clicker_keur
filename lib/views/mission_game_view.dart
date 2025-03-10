@@ -27,9 +27,12 @@ class _MissionGameViewState extends State<MissionGameView>
   void initState() {
     super.initState();
     _currentMission = widget.playerMission;
-    Provider.of<MissionViewModel>(context, listen: false).loadMission(_currentMission.mission);
-    print(Provider.of<MissionViewModel>(context, listen: false)
-        .missionObjective);
+    MissionViewModel missionViewModel = Provider.of<MissionViewModel>(context, listen: false);
+
+    missionViewModel.loadMission(_currentMission.mission);
+    clicksRequired = missionViewModel.missionObjective;
+
+    print(clicksRequired);
   }
 
   @override
@@ -41,14 +44,11 @@ class _MissionGameViewState extends State<MissionGameView>
           MissionEnnemy(missionId: _currentMission.mission),
           MissionProgressBar(
             clicksDone: _currentMission.clicksDone,
-            clicksRequired: Provider.of<MissionViewModel>(context, listen: false)
-                .missionObjective,
+            clicksRequired: clicksRequired,
           ),
           Text("${_currentMission.clicksDone}"),
           MissionClickButton(
-            onTap: _currentMission.clicksDone >= (
-                Provider.of<MissionViewModel>(context, listen: false)
-                    .missionObjective ?? 0)
+            onTap: _currentMission.clicksDone >= (clicksRequired ?? 0)
                 ? () => showMissionCompletionDialog(
                     context, _currentMission.mission)
                 : () => Provider.of<PlayerMissionViewModel>(context, listen: false)
