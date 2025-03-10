@@ -66,6 +66,8 @@ class _MissionsListViewState extends State<MissionsListView> {
     final playerViewModel = Provider.of<PlayerViewModel>(context);
     final playerMissionViewModel = Provider.of<PlayerMissionViewModel>(context);
     final missionViewModel = Provider.of<MissionViewModel>(context, listen: false);
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       body: Stack(
@@ -79,8 +81,8 @@ class _MissionsListViewState extends State<MissionsListView> {
             ),
           ),
           Positioned(
-            top: 40,
-            left: 15,
+            top: screenHeight * 0.05,
+            left: screenWidth * 0.05,
             child: IconButton(
               icon: Icon(Icons.arrow_back, color: Colors.greenAccent, size: 30),
               onPressed: () {
@@ -92,18 +94,18 @@ class _MissionsListViewState extends State<MissionsListView> {
             ),
           ),
           Positioned(
-            top: 100,
-            left: 20,
+            top: screenHeight * 0.15,
+            left: screenWidth * 0.1,
             child: _buildMissionCard(playerMissionViewModel, missionViewModel, playerViewModel, 0),
           ),
           Positioned(
-            bottom: 50,
-            left: MediaQuery.of(context).size.width / 2 - 75,
+            bottom: screenHeight * 0.1,
+            left: screenWidth * 0.5 - 80,
             child: _buildMissionCard(playerMissionViewModel, missionViewModel, playerViewModel, 2),
           ),
           Positioned(
-            top: 100,
-            right: 20,
+            top: screenHeight * 0.15,
+            right: screenWidth * 0.1,
             child: _buildMissionCard(playerMissionViewModel, missionViewModel, playerViewModel, 1),
           ),
         ],
@@ -122,34 +124,41 @@ class _MissionsListViewState extends State<MissionsListView> {
     bool isLocked = playerMissionViewModel.playerMissions[index].status == 1;
 
     return Container(
-      width: 150,
-      height: 150,
+      width: 0.25 * MediaQuery.of(context).size.width,
+      height: 0.18 * MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
         color: Colors.black,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: isLocked ? Colors.redAccent : Colors.greenAccent, width: 1),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: isLocked ? Colors.redAccent : Colors.greenAccent, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.greenAccent.withOpacity(0.3),
+            blurRadius: 8,
+            spreadRadius: 2,
+          )
+        ],
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            height: 40,
+            height: 0.05 * MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage("assets/missionsbanner_$missionId.png"),
                 fit: BoxFit.cover,
               ),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
             ),
           ),
           Text(
             mission.name,
-            style: TextStyle(color: Colors.greenAccent, fontSize: 14, fontFamily: 'Courier New'),
+            style: TextStyle(color: Colors.greenAccent, fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Courier New'),
             textAlign: TextAlign.center,
           ),
           Text(
             "💰 ${mission.rewardMoney} | ⚡ ${mission.rewardPower}",
-            style: TextStyle(color: Colors.white70, fontSize: 12, fontFamily: 'Courier New'),
+            style: TextStyle(color: Colors.white70, fontSize: 13, fontFamily: 'Courier New'),
           ),
           isLocked
               ? Icon(Icons.lock, color: Colors.redAccent, size: 30)
@@ -157,6 +166,7 @@ class _MissionsListViewState extends State<MissionsListView> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.greenAccent,
               foregroundColor: Colors.black,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             onPressed: () {
               playerMissionViewModel.startMission(playerViewModel.player!.id, missionId);
@@ -169,7 +179,7 @@ class _MissionsListViewState extends State<MissionsListView> {
                 ),
               );
             },
-            child: Text("GO"),
+            child: Text("GO", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
