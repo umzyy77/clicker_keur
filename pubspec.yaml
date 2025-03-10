@@ -10,7 +10,7 @@ environment:
   sdk: ^3.5.4
 
 dependencies:
-  lottie: ^2.3.2
+  lottie: ^2.6.0
   shared_preferences: ^2.2.0
 
   flutter:
@@ -46,4 +46,4 @@ flutter:
     - assets/background_pc.png
     - assets/background_mobile.png
     - assets/background_profil.png
-
+    - assets/unlock.gif
