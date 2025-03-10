@@ -4,8 +4,8 @@ import 'status_model.dart';
 
 class PlayerMissionModel {
   final int mission;
-  final int status;
-  final int clicksDone;
+  int status;
+  int clicksDone;
 
   PlayerMissionModel({
     required this.mission,
