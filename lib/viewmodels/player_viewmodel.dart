@@ -1,55 +1,70 @@
 import 'package:flutter/material.dart';
 import '../models/player_model.dart';
-import '../services/player_service.dart';
+import '../core/services/player_service.dart';
 
 class PlayerViewModel extends ChangeNotifier {
+  final PlayerService _playerService = PlayerService();
   PlayerModel? _player;
   bool _isLoading = false;
+  String? _errorMessage;
 
-  PlayerModel get player => _player ?? PlayerModel(
-    id: 0, pseudo: "Chargement...", totalExperience: 0, clickDamage: 1, currentEnemyLevel: 1,
-  );
-
+  PlayerModel? get player => _player;
   bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
 
-  // 🔹 Charger les infos du joueur
-  Future<void> fetchPlayer(int playerId) async {
+  /// 🔹 Charge le joueur depuis le fichier JSON local
+  Future<void> loadPlayer() async {
     _isLoading = true;
+    _errorMessage = null;
     notifyListeners();
 
     try {
-      _player = await PlayerService.getPlayer(playerId);
+      PlayerModel? storedPlayer = await _playerService.loadStoredPlayer();
+      if (storedPlayer != null) {
+        _player = storedPlayer;
+      } else {
+        _errorMessage = "Aucun joueur enregistré.";
+      }
     } catch (e) {
-      print("Erreur : $e");
-      _player = PlayerModel(id: 0, pseudo: "Erreur", totalExperience: 0, clickDamage: 1, currentEnemyLevel: 1);
+      _errorMessage = "Erreur : ${e.toString()}";
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
+  }
 
-    _isLoading = false;
+  /// 🔹 Crée un joueur et met à jour `_player`
+  Future<bool> createPlayer(String username) async {
+    _isLoading = true;
+    _errorMessage = null;
     notifyListeners();
-  }
-
-  // 🔹 Ajouter de l'XP au joueur
-  Future<void> addExperience(int playerId) async {
-    if (_player == null) return;
 
     try {
-      await PlayerService.incrementPlayerXP(playerId);
-      _player!.totalExperience += 10;
-      notifyListeners();
+      PlayerModel? newPlayer = await _playerService.createPlayer(username);
+      if (newPlayer != null) {
+        _player = newPlayer;
+        notifyListeners();
+        return true;
+      } else {
+        _errorMessage = "Échec de la création du joueur.";
+      }
     } catch (e) {
-      print("Erreur : $e");
+      _errorMessage = "Erreur : ${e.toString()}";
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
+    return false;
   }
 
-  // 🔹 Acheter une amélioration
-  Future<void> buyEnhancement(int enhancementId) async {
-    if (_player == null) return;
-
-    try {
-      await PlayerService.buyEnhancement(_player!.id, enhancementId);
-      notifyListeners();
-    } catch (e) {
-      print("Erreur : $e");
+  /// 🔹 Supprime un joueur et réinitialise le ViewModel
+  Future<void> deletePlayer() async {
+    if (_player != null) {
+      bool success = await _playerService.deletePlayer(_player!.idPlayer);
+      if (success) {
+        _player = null;
+        notifyListeners();
+      }
     }
   }
 }

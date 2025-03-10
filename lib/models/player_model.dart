@@ -1,26 +1,33 @@
 class PlayerModel {
-  final int id;
-  String pseudo;
-  int totalExperience;
-  int clickDamage;
-  int currentEnemyLevel;
+  final int idPlayer;
+  final String username;
+  final int hackingPower;
+  final int money;
 
   PlayerModel({
-    required this.id,
-    required this.pseudo,
-    required this.totalExperience,
-    required this.clickDamage,
-    required this.currentEnemyLevel,
+    required this.idPlayer,
+    required this.username,
+    required this.hackingPower,
+    required this.money,
   });
 
-  // 🔹 Convertir JSON en PlayerModel
   factory PlayerModel.fromJson(Map<String, dynamic> json) {
     return PlayerModel(
-      id: json['id_player'] ?? 0,
-      pseudo: json['pseudo'] ?? "Inconnu",
-      totalExperience: json['total_experience'] ?? 0,
-      clickDamage: json['click_damage'] ?? 1,
-      currentEnemyLevel: json['id_enemy'] ?? 1,
+      idPlayer: json['id_player'],
+      username: json['username'],
+      hackingPower: json['hacking_power'],
+      money: json['money'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "id_player": idPlayer,
+      "username": username,
+      "hacking_power": hackingPower,
+      "money": money,
+    };
+  }
+
+  int get id => idPlayer;
 }
