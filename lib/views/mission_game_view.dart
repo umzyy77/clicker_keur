@@ -73,16 +73,22 @@ class _MissionGameViewState extends State<MissionGameView>
     await playerMissionViewModel.loadPlayerMissions(playerViewModel.player!.id);
 
     setState(() {
-      _currentMission = playerMissionViewModel.playerMissions.firstWhere(
+      final updatedMission = playerMissionViewModel.playerMissions.firstWhere(
             (mission) => mission.mission == _currentMission.mission,
         orElse: () => _currentMission,
       );
+
+      if (updatedMission.mission != _currentMission.mission ||
+          updatedMission.clicksDone != _currentMission.clicksDone) {
+        _currentMission = updatedMission;
+      }
 
       if (_currentMission.clicksDone >= (clicksRequired ?? 0)) {
         _isMissionComplete = true;
         showMissionCompletionDialog(context, _currentMission.mission);
       }
     });
+
 
     _animationController.forward(from: 0.0);
   }

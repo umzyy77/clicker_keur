@@ -97,7 +97,9 @@ class _HomeViewState extends State<HomeView> {
                     child: ListTile(
                       title: Text(mission.name),
                       subtitle: Text("Récompense : 💰 ${mission.rewardMoney} | ⚡ ${mission.rewardPower}"),
-                      trailing: ElevatedButton(
+                      trailing: playerMissionViewModel.playerMissions[index].status == 1
+                          ? Text("🔒 Mission verrouillée", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold))
+                          : ElevatedButton(
                         onPressed: () {
                           playerMissionViewModel.startMission(player.id, missionId);
                           Navigator.pushReplacement(
