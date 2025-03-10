@@ -66,6 +66,8 @@ class _MissionsListViewState extends State<MissionsListView> {
     final playerViewModel = Provider.of<PlayerViewModel>(context);
     final playerMissionViewModel = Provider.of<PlayerMissionViewModel>(context);
     final missionViewModel = Provider.of<MissionViewModel>(context, listen: false);
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       body: Stack(
@@ -79,8 +81,8 @@ class _MissionsListViewState extends State<MissionsListView> {
             ),
           ),
           Positioned(
-            top: 40,
-            left: 15,
+            top: screenHeight * 0.05,
+            left: screenWidth * 0.05,
             child: IconButton(
               icon: Icon(Icons.arrow_back, color: Colors.greenAccent, size: 30),
               onPressed: () {
@@ -92,18 +94,18 @@ class _MissionsListViewState extends State<MissionsListView> {
             ),
           ),
           Positioned(
-            top: 100,
-            left: 20,
+            top: screenHeight * 0.15,
+            left: screenWidth * 0.1,
             child: _buildMissionCard(playerMissionViewModel, missionViewModel, playerViewModel, 0),
           ),
           Positioned(
-            bottom: 50,
-            left: MediaQuery.of(context).size.width / 2 - 75,
+            bottom: screenHeight * 0.1,
+            left: screenWidth * 0.5 - (screenWidth * 0.125),
             child: _buildMissionCard(playerMissionViewModel, missionViewModel, playerViewModel, 2),
           ),
           Positioned(
-            top: 100,
-            right: 20,
+            top: screenHeight * 0.15,
+            right: screenWidth * 0.1,
             child: _buildMissionCard(playerMissionViewModel, missionViewModel, playerViewModel, 1),
           ),
         ],
@@ -121,58 +123,79 @@ class _MissionsListViewState extends State<MissionsListView> {
 
     bool isLocked = playerMissionViewModel.playerMissions[index].status == 1;
 
-    return Container(
-      width: 150,
-      height: 150,
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: isLocked ? Colors.redAccent : Colors.greenAccent, width: 1),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            height: 40,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("assets/missionsbanner_$missionId.png"),
-                fit: BoxFit.cover,
-              ),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-            ),
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          width: 0.3 * MediaQuery.of(context).size.width,
+          height: 0.2 * MediaQuery.of(context).size.height,
+          decoration: BoxDecoration(
+            color: Colors.black,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: isLocked ? Colors.redAccent : Colors.greenAccent, width: 3),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.greenAccent.withOpacity(0.5),
+                blurRadius: 12,
+                spreadRadius: 3,
+              )
+            ],
           ),
-          Text(
-            mission.name,
-            style: TextStyle(color: Colors.greenAccent, fontSize: 14, fontFamily: 'Courier New'),
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            "💰 ${mission.rewardMoney} | ⚡ ${mission.rewardPower}",
-            style: TextStyle(color: Colors.white70, fontSize: 12, fontFamily: 'Courier New'),
-          ),
-          isLocked
-              ? Icon(Icons.lock, color: Colors.redAccent, size: 30)
-              : ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.greenAccent,
-              foregroundColor: Colors.black,
-            ),
-            onPressed: () {
-              playerMissionViewModel.startMission(playerViewModel.player!.id, missionId);
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => MissionGameView(
-                    playerMission: playerMissionViewModel.playerMissions[index],
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                height: 0.06 * MediaQuery.of(context).size.height,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/missionsbanner_$missionId.png"),
+                    fit: BoxFit.cover,
                   ),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                 ),
-              );
-            },
-            child: Text("GO"),
+              ),
+              Text(
+                mission.name,
+                style: TextStyle(color: Colors.greenAccent, fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Courier New'),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                "💰 ${mission.rewardMoney} | ⚡ ${mission.rewardPower}",
+                style: TextStyle(color: Colors.white70, fontSize: 14, fontFamily: 'Courier New'),
+              ),
+              isLocked
+                  ? Icon(Icons.lock, color: Colors.redAccent, size: 30)
+                  : ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.greenAccent,
+                  foregroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                onPressed: () {
+                  playerMissionViewModel.startMission(playerViewModel.player!.id, missionId);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => MissionGameView(
+                        playerMission: playerMissionViewModel.playerMissions[index],
+                      ),
+                    ),
+                  );
+                },
+                child: Text("GO", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+        if (_unlockedMissionId == missionId && _showGifAnimation)
+          Positioned(
+            child: Image.asset(
+              "assets/unlock.gif",
+              width: 100,
+              height: 100,
+            ),
+          ),
+      ],
     );
   }
 }
