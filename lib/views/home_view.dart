@@ -12,6 +12,9 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  bool _isCheckingForUnlockedMission = false; // ✅ Évite les appels multiples
+
+
   @override
   void initState() {
     super.initState();
@@ -33,9 +36,48 @@ class _HomeViewState extends State<HomeView> {
     if (playerViewModel.player != null) {
       await playerMissionViewModel.loadPlayerMissions(playerViewModel.player!.id);
       print("📋 Missions du joueur : ${playerMissionViewModel.playerMissions.length}");
+
+      // ✅ Vérifier si une mission a été débloquée après chargement
+      _checkForUnlockedMission(playerViewModel.player!.id);
     }
   }
 
+  Future<void> _checkForUnlockedMission(int playerId) async {
+    if (_isCheckingForUnlockedMission) return; // ✅ Empêcher les appels multiples
+    _isCheckingForUnlockedMission = true;
+
+    final playerMissionViewModel = Provider.of<PlayerMissionViewModel>(context, listen: false);
+    int? unlockedMissionId = await playerMissionViewModel.checkNewlyUnlockedMission(playerId);
+
+    if (unlockedMissionId != null) {
+      print("🔓 Nouvelle mission débloquée : $unlockedMissionId");
+
+      // ✅ Vérifie si le widget est toujours monté avant de faire setState()
+      if (mounted) {
+        setState(() {
+          _showUnlockedAnimation(unlockedMissionId);
+        });
+      }
+    }
+    _isCheckingForUnlockedMission = false;
+  }
+
+
+  void _showUnlockedAnimation(int missionId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("🎉 Mission Débloquée !"),
+        content: Text("La mission #$missionId a été débloquée !"),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,40 +123,39 @@ class _HomeViewState extends State<HomeView> {
                 ? Text("Aucune mission n'est disponible")
                 : Expanded(
               child: ListView.builder(
-                itemCount: playerMissionViewModel.playerMissions.length,
-                itemBuilder: (context, index) {
-                  final missionId = playerMissionViewModel.playerMissions[index].mission;
-                  MissionModel? mission = missionViewModel.getMissionById(missionId);
+                  itemCount: playerMissionViewModel.playerMissions.length,
+                  itemBuilder: (context, index) {
+                    final missionId = playerMissionViewModel.playerMissions[index].mission;
+                    MissionModel? mission = missionViewModel.getMissionById(missionId);
 
-                  print("🔍 Vérification : Mission $missionId trouvée ? ${mission != null}");
+                    print("🔍 Vérification : Mission $missionId trouvée ? ${mission != null}");
 
-                  if (mission == null) {
-                    print("⚠️ Mission $missionId introuvable !");
-                    return SizedBox();
-                  }
+                    if (mission == null) {
+                      print("⚠️ Mission $missionId introuvable !");
+                      return SizedBox();
+                    }
 
-                  return Card(
-                    child: ListTile(
-                      title: Text(mission.name),
-                      subtitle: Text("Récompense : 💰 ${mission.rewardMoney} | ⚡ ${mission.rewardPower}"),
-                      trailing: playerMissionViewModel.playerMissions[index].status == 1
-                          ? Text("🔒 Mission verrouillée", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold))
-                          : ElevatedButton(
-                        onPressed: () {
-                          playerMissionViewModel.startMission(player.id, missionId);
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => MissionGameView(playerMission: playerMissionViewModel.playerMissions[index]),
-                            ),
-                          );
-                        },
-                        child: Text("${mission.idMission}"),
+                    return Card(
+                      child: ListTile(
+                        title: Text(mission.name),
+                        subtitle: Text("Récompense : 💰 ${mission.rewardMoney} | ⚡ ${mission.rewardPower}"),
+                        trailing: playerMissionViewModel.playerMissions[index].status == 1
+                            ? Text("🔒 Mission verrouillée", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold))
+                            : ElevatedButton(
+                          onPressed: () {
+                            playerMissionViewModel.startMission(player.id, missionId);
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => MissionGameView(playerMission: playerMissionViewModel.playerMissions[index]),
+                              ),
+                            );
+                          },
+                          child: Text("${mission.idMission}"),
+                        ),
                       ),
-                    ),
-                  );
-                }
-,
+                    );
+                  }
               ),
             ),
           ],

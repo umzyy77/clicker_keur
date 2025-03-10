@@ -68,6 +68,16 @@ class PlayerMissionViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+  /// 🔹 Vérifie si une nouvelle mission a été débloquée
+  Future<int?> checkNewlyUnlockedMission(int playerId) async {
+    try {
+      int? missionId = await _playerMissionService.checkNewlyUnlockedMission(playerId);
+      return missionId; // Renvoie l'ID de la mission si elle est débloquée
+    } catch (e) {
+      _errorMessage = "Erreur lors de la vérification des missions débloquées : ${e.toString()}";
+      return null;
+    }
+  }
 
 
 
