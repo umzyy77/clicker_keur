@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled1/views/mission_list_view.dart';
 import '../views/home_view.dart';
 
 
@@ -19,6 +20,6 @@ void showMissionCompletionDialog(BuildContext context, int missionId) {
 
   Future.delayed(Duration(seconds: 2), () {
     Navigator.of(context).pop(); // Fermer la boîte de dialogue
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeView()));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => MissionsListView()));
   });
 }

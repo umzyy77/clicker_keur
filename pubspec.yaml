@@ -46,4 +46,7 @@ flutter:
     - assets/background_pc.png
     - assets/background_mobile.png
     - assets/background_profil.png
+    - assets/background_hacker1.png
+    - assets/missionsbanner_1.png
+    - assets/missionsbanner_2.png
     - assets/unlock.gif
