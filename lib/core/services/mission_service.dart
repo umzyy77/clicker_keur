@@ -9,7 +9,7 @@ class MissionService {
     final response = await apiService.getRequest('/missions');
 
     if (response != null && response is List) {
-      print("📜 Réponse brute API (missions) : $response"); // 🔍 DEBUG
+      print("📜 Réponse brute API (missions) : $response");
       return response.map((json) => MissionModel.fromJson(json)).toList();
     }
 

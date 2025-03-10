@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:untitled1/viewmodels/player_viewmodel.dart';
 import 'package:untitled1/views/mission_list_view.dart';
 import 'package:untitled1/views/player_profile_view.dart';
+import 'package:untitled1/views/shop_view.dart';
 
 class HomeView extends StatefulWidget {
   @override
@@ -22,10 +23,9 @@ class _HomeViewState extends State<HomeView> {
     final player = playerViewModel.player;
     final screenSize = MediaQuery.of(context).size;
 
-    // 🔥 Sélectionne dynamiquement l'image de fond en fonction de la résolution
     String backgroundImage = screenSize.width > 600
-        ? "assets/background_pc.png"  // 📌 Image pour PC
-        : "assets/background_mobile.png"; // 📌 Image pour Mobile
+        ? "assets/background_pc.png"
+        : "assets/background_mobile.png";
 
     if (player == null) {
       return Scaffold(
@@ -41,15 +41,13 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       body: Stack(
         children: [
-          /// 🖼 **FOND D'ÉCRAN RESPONSIVE**
           Positioned.fill(
             child: Image.asset(
               backgroundImage,
-              fit: BoxFit.cover, // Ajuste l’image pour qu’elle couvre tout l’écran
+              fit: BoxFit.cover,
             ),
           ),
 
-          /// **📜 MENU À GAUCHE**
           Positioned(
             left: screenSize.width * 0.08,
             top: screenSize.height * 0.25,
@@ -60,9 +58,7 @@ class _HomeViewState extends State<HomeView> {
                   Navigator.push(context, MaterialPageRoute(builder: (_) => MissionsListView()));
                 }),
                 _buildMenuItem("🛒 SHOP", () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("🛠 Le shop n'est pas encore disponible !")),
-                  );
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ShopView()));
                 }),
                 _buildMenuItem("👤 JOUEUR", () {
                   Navigator.push(context, MaterialPageRoute(builder: (_) => PlayerProfileView()));
@@ -71,7 +67,6 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
 
-          /// **📋 INFO JOUEUR EN HAUT À DROITE**
           Positioned(
             top: screenSize.height * 0.05,
             right: screenSize.width * 0.05,
@@ -106,13 +101,13 @@ class _HomeViewState extends State<HomeView> {
       child: GestureDetector(
         onTap: onPressed,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 25), // Espacement plus grand
+          padding: const EdgeInsets.symmetric(vertical: 25),
           child: AnimatedDefaultTextStyle(
             duration: Duration(milliseconds: 150),
             style: TextStyle(
-              fontSize: MediaQuery.of(context).size.width > 600 ? 48 : 32, // Taille responsive
+              fontSize: MediaQuery.of(context).size.width > 600 ? 48 : 32,
               fontWeight: FontWeight.bold,
-              color: _hoverState[title]! ? Colors.red : Colors.white, // Blanc par défaut, rouge au hover
+              color: _hoverState[title]! ? Colors.red : Colors.white,
               letterSpacing: 2,
             ),
             child: Text(title),
