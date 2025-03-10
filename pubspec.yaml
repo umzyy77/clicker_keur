@@ -42,4 +42,7 @@ flutter:
     - assets/player.json
     - assets/laptop.png
     - assets/lightning.json
+    - assets/background.png
+    - assets/background_pc.png
+    - assets/background_mobile.png
 

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:untitled1/models/mission_model.dart';
-import 'package:untitled1/viewmodels/mission_viewmodel.dart';
-import 'package:untitled1/views/mission_game_view.dart';
-import '../viewmodels/player_viewmodel.dart';
-import '../viewmodels/player_mission_viewmodel.dart';
+import 'package:untitled1/viewmodels/player_viewmodel.dart';
+import 'package:untitled1/views/mission_list_view.dart';
+import 'package:untitled1/views/player_profile_view.dart';
 
 class HomeView extends StatefulWidget {
   @override
@@ -12,155 +10,123 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  bool _isCheckingForUnlockedMission = false; // ✅ Évite les appels multiples
-
+  final Map<String, bool> _hoverState = {
+    "▶ JOUER": false,
+    "🛒 SHOP": false,
+    "👤 JOUEUR": false,
+  };
 
   @override
-  void initState() {
-    super.initState();
-    _loadPlayerAndMissions();
-  }
+  Widget build(BuildContext context) {
+    final playerViewModel = Provider.of<PlayerViewModel>(context);
+    final player = playerViewModel.player;
+    final screenSize = MediaQuery.of(context).size;
 
-  Future<void> _loadPlayerAndMissions() async {
-    final playerViewModel = Provider.of<PlayerViewModel>(context, listen: false);
-    final playerMissionViewModel = Provider.of<PlayerMissionViewModel>(context, listen: false);
-    final missionViewModel = Provider.of<MissionViewModel>(context, listen: false);
+    // 🔥 Sélectionne dynamiquement l'image de fond en fonction de la résolution
+    String backgroundImage = screenSize.width > 600
+        ? "assets/background_pc.png"  // 📌 Image pour PC
+        : "assets/background_mobile.png"; // 📌 Image pour Mobile
 
-    print("🔄 Chargement des missions...");
-
-    await missionViewModel.loadMissions();
-    print("📜 Missions récupérées (depuis API) : ${missionViewModel.missions.length}");
-
-    await playerViewModel.loadPlayer();
-
-    if (playerViewModel.player != null) {
-      await playerMissionViewModel.loadPlayerMissions(playerViewModel.player!.id);
-      print("📋 Missions du joueur : ${playerMissionViewModel.playerMissions.length}");
-
-      // ✅ Vérifier si une mission a été débloquée après chargement
-      _checkForUnlockedMission(playerViewModel.player!.id);
+    if (player == null) {
+      return Scaffold(
+        body: Center(
+          child: Text(
+            "Aucun joueur trouvé",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.redAccent),
+          ),
+        ),
+      );
     }
-  }
 
-  Future<void> _checkForUnlockedMission(int playerId) async {
-    if (_isCheckingForUnlockedMission) return; // ✅ Empêcher les appels multiples
-    _isCheckingForUnlockedMission = true;
+    return Scaffold(
+      body: Stack(
+        children: [
+          /// 🖼 **FOND D'ÉCRAN RESPONSIVE**
+          Positioned.fill(
+            child: Image.asset(
+              backgroundImage,
+              fit: BoxFit.cover, // Ajuste l’image pour qu’elle couvre tout l’écran
+            ),
+          ),
 
-    final playerMissionViewModel = Provider.of<PlayerMissionViewModel>(context, listen: false);
-    int? unlockedMissionId = await playerMissionViewModel.checkNewlyUnlockedMission(playerId);
+          /// **📜 MENU À GAUCHE**
+          Positioned(
+            left: screenSize.width * 0.08,
+            top: screenSize.height * 0.25,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildMenuItem("▶ JOUER", () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => MissionsListView()));
+                }),
+                _buildMenuItem("🛒 SHOP", () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("🛠 Le shop n'est pas encore disponible !")),
+                  );
+                }),
+                _buildMenuItem("👤 JOUEUR", () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => PlayerProfileView()));
+                }),
+              ],
+            ),
+          ),
 
-    if (unlockedMissionId != null) {
-      print("🔓 Nouvelle mission débloquée : $unlockedMissionId");
-
-      // ✅ Vérifie si le widget est toujours monté avant de faire setState()
-      if (mounted) {
-        setState(() {
-          _showUnlockedAnimation(unlockedMissionId);
-        });
-      }
-    }
-    _isCheckingForUnlockedMission = false;
-  }
-
-
-  void _showUnlockedAnimation(int missionId) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("🎉 Mission Débloquée !"),
-        content: Text("La mission #$missionId a été débloquée !"),
-        actions: [
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text("OK"),
+          /// **📋 INFO JOUEUR EN HAUT À DROITE**
+          Positioned(
+            top: screenSize.height * 0.05,
+            right: screenSize.width * 0.05,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  player.username,
+                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+                SizedBox(height: 5),
+                Row(
+                  children: [
+                    _buildInfoText("💻 ${player.hackingPower}"),
+                    SizedBox(width: 20),
+                    _buildInfoText("💰 ${player.money}"),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final playerViewModel = Provider.of<PlayerViewModel>(context);
-    final playerMissionViewModel = Provider.of<PlayerMissionViewModel>(context);
-    final missionViewModel = Provider.of<MissionViewModel>(context, listen: false);
-
-    if (playerViewModel.isLoading) {
-      return Scaffold(
-        appBar: AppBar(title: Text("Hacking Clicker")),
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    final player = playerViewModel.player;
-    if (player == null) {
-      return Scaffold(
-        appBar: AppBar(title: Text("Hacking Clicker")),
-        body: Center(child: Text("Aucun joueur trouvé", style: TextStyle(fontSize: 18))),
-      );
-    }
-
-    return Scaffold(
-      appBar: AppBar(title: Text("Hacking Clicker")),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Bienvenue, ${player.username} !",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+  /// **🔹 Crée un bouton avec effet hover**
+  Widget _buildMenuItem(String title, VoidCallback onPressed) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hoverState[title] = true),
+      onExit: (_) => setState(() => _hoverState[title] = false),
+      child: GestureDetector(
+        onTap: onPressed,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 25), // Espacement plus grand
+          child: AnimatedDefaultTextStyle(
+            duration: Duration(milliseconds: 150),
+            style: TextStyle(
+              fontSize: MediaQuery.of(context).size.width > 600 ? 48 : 32, // Taille responsive
+              fontWeight: FontWeight.bold,
+              color: _hoverState[title]! ? Colors.red : Colors.white, // Blanc par défaut, rouge au hover
+              letterSpacing: 2,
             ),
-            SizedBox(height: 10),
-            Text("💻 Puissance de hacking : ${player.hackingPower}"),
-            Text("💰 Argent : ${player.money}"),
-            SizedBox(height: 20),
-            Text("📋 Missions disponibles :", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 10),
-
-            playerMissionViewModel.isLoading
-                ? CircularProgressIndicator()
-                : playerMissionViewModel.playerMissions.isEmpty
-                ? Text("Aucune mission n'est disponible")
-                : Expanded(
-              child: ListView.builder(
-                  itemCount: playerMissionViewModel.playerMissions.length,
-                  itemBuilder: (context, index) {
-                    final missionId = playerMissionViewModel.playerMissions[index].mission;
-                    MissionModel? mission = missionViewModel.getMissionById(missionId);
-
-                    print("🔍 Vérification : Mission $missionId trouvée ? ${mission != null}");
-
-                    if (mission == null) {
-                      print("⚠️ Mission $missionId introuvable !");
-                      return SizedBox();
-                    }
-
-                    return Card(
-                      child: ListTile(
-                        title: Text(mission.name),
-                        subtitle: Text("Récompense : 💰 ${mission.rewardMoney} | ⚡ ${mission.rewardPower}"),
-                        trailing: playerMissionViewModel.playerMissions[index].status == 1
-                            ? Text("🔒 Mission verrouillée", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold))
-                            : ElevatedButton(
-                          onPressed: () {
-                            playerMissionViewModel.startMission(player.id, missionId);
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => MissionGameView(playerMission: playerMissionViewModel.playerMissions[index]),
-                              ),
-                            );
-                          },
-                          child: Text("${mission.idMission}"),
-                        ),
-                      ),
-                    );
-                  }
-              ),
-            ),
-          ],
+            child: Text(title),
+          ),
         ),
       ),
+    );
+  }
+
+  /// **📌 Style pour les infos en haut à droite**
+  Widget _buildInfoText(String text) {
+    return Text(
+      text,
+      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
     );
   }
 }
