@@ -8,7 +8,6 @@ import '../widgets/mission_progress_bar.dart';
 import '../widgets/mission_click_button.dart';
 import '../widgets/mission_completion_dialog.dart';
 
-
 class MissionGameView extends StatefulWidget {
   final PlayerMissionModel playerMission;
 
@@ -24,6 +23,7 @@ class _MissionGameViewState extends State<MissionGameView>
   late Animation<double> _animation;
   int? clicksRequired;
   late PlayerMissionModel _currentMission;
+  bool _isMissionComplete = false; // 🔹 Bloque les clics après complétion
 
   @override
   void initState() {
@@ -51,6 +51,8 @@ class _MissionGameViewState extends State<MissionGameView>
   }
 
   Future<void> _incrementClicks() async {
+    if (_isMissionComplete) return; // 🔹 Bloquer les clics si la mission est terminée
+
     final playerViewModel = Provider.of<PlayerViewModel>(context, listen: false);
     final playerMissionViewModel = Provider.of<PlayerMissionViewModel>(context, listen: false);
 
@@ -59,22 +61,30 @@ class _MissionGameViewState extends State<MissionGameView>
       _currentMission.mission,
     );
 
-    if (success) {
-      await playerMissionViewModel.loadPlayerMissions(playerViewModel.player!.id);
-
+    if (!success) {
       setState(() {
-        _currentMission = playerMissionViewModel.playerMissions.firstWhere(
-              (mission) => mission.mission == _currentMission.mission,
-          orElse: () => _currentMission,
-        );
+        _isMissionComplete = true;
       });
+      showMissionCompletionDialog(context, _currentMission.mission);
+      return;
+    }
 
-      _animationController.forward(from: 0.0);
+    // 🔹 Rafraîchir les missions après un clic
+    await playerMissionViewModel.loadPlayerMissions(playerViewModel.player!.id);
+
+    setState(() {
+      _currentMission = playerMissionViewModel.playerMissions.firstWhere(
+            (mission) => mission.mission == _currentMission.mission,
+        orElse: () => _currentMission,
+      );
 
       if (_currentMission.clicksDone >= (clicksRequired ?? 0)) {
+        _isMissionComplete = true;
         showMissionCompletionDialog(context, _currentMission.mission);
       }
-    }
+    });
+
+    _animationController.forward(from: 0.0);
   }
 
   @override
@@ -88,7 +98,7 @@ class _MissionGameViewState extends State<MissionGameView>
             clicksRequired: clicksRequired,
           ),
           MissionClickButton(
-            onTap: _incrementClicks,
+            onTap: _isMissionComplete ? () {} : () => _incrementClicks(), // ✅ Correction ici
             animation: _animation,
             missionId: _currentMission.mission,
           ),
