@@ -51,24 +51,24 @@ class PlayerMissionViewModel extends ChangeNotifier {
   }
 
   /// 🔹 Incrémente les clics d’une mission en cours
-  Future<void> incrementMissionClicks(int playerId, int missionId) async {
+  Future<bool> incrementMissionClicks(int playerId, int missionId) async {
     try {
-      print("📤 Envoi de l'incrémentation pour mission $missionId du joueur $playerId...");
       bool success = await _playerMissionService.incrementClicks(playerId, missionId);
-
       if (success) {
-        print("✅ Incrémentation réussie !");
         await loadPlayerMissions(playerId);
+        return true;
       } else {
-        print("❌ Échec de l'incrémentation !");
         _errorMessage = "Échec de l'incrémentation des clics.";
+        return false;
       }
     } catch (e) {
-      print("⚠️ Erreur lors de l'incrémentation : ${e.toString()}");
       _errorMessage = "Erreur lors de l'incrémentation des clics : ${e.toString()}";
+      return false;
+    } finally {
+      notifyListeners();
     }
-    notifyListeners();
   }
+
 
 
 }

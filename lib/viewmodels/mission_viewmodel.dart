@@ -68,6 +68,18 @@ class MissionViewModel extends ChangeNotifier {
     }
   }
 
+  Future<int?> getMissionClicksRequired(int missionId) async {
+    final mission = _missions.firstWhere((m) => m.id == missionId);
+
+    if (mission == null) {
+      print("⚠️ Mission introuvable pour l'ID : $missionId");
+      return null;
+    }
+
+    return await _missionService.getMissionObjective(missionId);
+  }
+
+
   MissionModel? getMissionById(int missionId) {
     try {
       return _missions.firstWhere((mission) => mission.id == missionId);
