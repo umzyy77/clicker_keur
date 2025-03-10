@@ -27,40 +27,39 @@ class _MissionGameViewState extends State<MissionGameView>
   void initState() {
     super.initState();
     _currentMission = widget.playerMission;
-    MissionViewModel missionViewModel = Provider.of<MissionViewModel>(context, listen: false);
-
-    missionViewModel.loadMission(_currentMission.mission);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<MissionViewModel>(context, listen: false).loadMission(_currentMission.mission);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final missionViewModel = Provider.of<MissionViewModel>(context);
+    final playerMissionViewModel = Provider.of<PlayerMissionViewModel>(context);
+    final playerViewModel = Provider.of<PlayerViewModel>(context, listen: false);
+
+    int? clicksRequired = missionViewModel.missionObjective;
+    int clicksDone = playerMissionViewModel.playerMissions
+        .firstWhere((m) => m.mission == _currentMission.mission, orElse: () => _currentMission)
+        .clicksDone;
+
     return Scaffold(
       appBar: AppBar(title: Text("Mission en cours")),
-      body: Consumer<MissionViewModel>(
-        builder: (context, missionViewModel, child) {
-          int? clicksRequired = missionViewModel.missionObjective; // Obtenir la valeur mise à jour
-          return Stack(
-            children: [
-              MissionEnnemy(missionId: _currentMission.mission),
-              MissionProgressBar(
-                clicksDone: _currentMission.clicksDone,
-                clicksRequired: clicksRequired,
-              ),
-              Text("${_currentMission.clicksDone}"),
-              MissionClickButton(
-                  onTap: _currentMission.clicksDone >= (clicksRequired ?? 0)
-                      ? () => showMissionCompletionDialog(
-                      context, _currentMission.mission)
-                      : () => Provider.of<PlayerMissionViewModel>(context, listen: false)
-                      .incrementMissionClicks(
-                      Provider.of<PlayerViewModel>(context, listen: false)
-                          .player!.id, _currentMission.mission)
-              ),
-            ],
-          );
-        },
+      body: Stack(
+        children: [
+          MissionEnnemy(missionId: _currentMission.mission),
+          MissionProgressBar(
+            clicksDone: clicksDone,
+            clicksRequired: clicksRequired,
+          ),
+          Text("$clicksDone"),
+          MissionClickButton(
+            onTap: clicksDone >= (clicksRequired ?? 0)
+                ? () => showMissionCompletionDialog(context, _currentMission.mission)
+                : () => playerMissionViewModel.incrementMissionClicks(playerViewModel.player!.id, _currentMission.mission),
+          ),
+        ],
       ),
     );
   }
-
 }
