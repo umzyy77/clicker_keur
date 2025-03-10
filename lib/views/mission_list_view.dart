@@ -123,66 +123,79 @@ class _MissionsListViewState extends State<MissionsListView> {
 
     bool isLocked = playerMissionViewModel.playerMissions[index].status == 1;
 
-    return Container(
-      width: 0.25 * MediaQuery.of(context).size.width,
-      height: 0.18 * MediaQuery.of(context).size.height,
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: isLocked ? Colors.redAccent : Colors.greenAccent, width: 2),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.greenAccent.withOpacity(0.3),
-            blurRadius: 8,
-            spreadRadius: 2,
-          )
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            height: 0.05 * MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("assets/missionsbanner_$missionId.png"),
-                fit: BoxFit.cover,
-              ),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-            ),
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          width: 0.25 * MediaQuery.of(context).size.width,
+          height: 0.18 * MediaQuery.of(context).size.height,
+          decoration: BoxDecoration(
+            color: Colors.black,
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(color: isLocked ? Colors.redAccent : Colors.greenAccent, width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.greenAccent.withOpacity(0.3),
+                blurRadius: 8,
+                spreadRadius: 2,
+              )
+            ],
           ),
-          Text(
-            mission.name,
-            style: TextStyle(color: Colors.greenAccent, fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Courier New'),
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            "💰 ${mission.rewardMoney} | ⚡ ${mission.rewardPower}",
-            style: TextStyle(color: Colors.white70, fontSize: 13, fontFamily: 'Courier New'),
-          ),
-          isLocked
-              ? Icon(Icons.lock, color: Colors.redAccent, size: 30)
-              : ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.greenAccent,
-              foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            ),
-            onPressed: () {
-              playerMissionViewModel.startMission(playerViewModel.player!.id, missionId);
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => MissionGameView(
-                    playerMission: playerMissionViewModel.playerMissions[index],
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                height: 0.05 * MediaQuery.of(context).size.height,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/missionsbanner_$missionId.png"),
+                    fit: BoxFit.cover,
                   ),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
                 ),
-              );
-            },
-            child: Text("GO", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+              ),
+              Text(
+                mission.name,
+                style: TextStyle(color: Colors.greenAccent, fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Courier New'),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                "💰 ${mission.rewardMoney} | ⚡ ${mission.rewardPower}",
+                style: TextStyle(color: Colors.white70, fontSize: 13, fontFamily: 'Courier New'),
+              ),
+              isLocked
+                  ? Icon(Icons.lock, color: Colors.redAccent, size: 30)
+                  : ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.greenAccent,
+                  foregroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                onPressed: () {
+                  playerMissionViewModel.startMission(playerViewModel.player!.id, missionId);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => MissionGameView(
+                        playerMission: playerMissionViewModel.playerMissions[index],
+                      ),
+                    ),
+                  );
+                },
+                child: Text("GO", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+        if (_unlockedMissionId == missionId && _showGifAnimation)
+          Positioned(
+            child: Image.asset(
+              "assets/unlock.gif",
+              width: 100,
+              height: 100,
+            ),
+          ),
+      ],
     );
   }
 }
