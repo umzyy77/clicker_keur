@@ -100,7 +100,7 @@ class _MissionsListViewState extends State<MissionsListView> {
           ),
           Positioned(
             bottom: screenHeight * 0.1,
-            left: screenWidth * 0.5 - 80,
+            left: screenWidth * 0.5 - (screenWidth * 0.125),
             child: _buildMissionCard(playerMissionViewModel, missionViewModel, playerViewModel, 2),
           ),
           Positioned(
@@ -127,17 +127,17 @@ class _MissionsListViewState extends State<MissionsListView> {
       alignment: Alignment.center,
       children: [
         Container(
-          width: 0.25 * MediaQuery.of(context).size.width,
-          height: 0.18 * MediaQuery.of(context).size.height,
+          width: 0.3 * MediaQuery.of(context).size.width,
+          height: 0.2 * MediaQuery.of(context).size.height,
           decoration: BoxDecoration(
             color: Colors.black,
-            borderRadius: BorderRadius.circular(15),
-            border: Border.all(color: isLocked ? Colors.redAccent : Colors.greenAccent, width: 2),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: isLocked ? Colors.redAccent : Colors.greenAccent, width: 3),
             boxShadow: [
               BoxShadow(
-                color: Colors.greenAccent.withOpacity(0.3),
-                blurRadius: 8,
-                spreadRadius: 2,
+                color: Colors.greenAccent.withOpacity(0.5),
+                blurRadius: 12,
+                spreadRadius: 3,
               )
             ],
           ),
@@ -145,23 +145,23 @@ class _MissionsListViewState extends State<MissionsListView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                height: 0.05 * MediaQuery.of(context).size.height,
+                height: 0.06 * MediaQuery.of(context).size.height,
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage("assets/missionsbanner_$missionId.png"),
                     fit: BoxFit.cover,
                   ),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                 ),
               ),
               Text(
                 mission.name,
-                style: TextStyle(color: Colors.greenAccent, fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'Courier New'),
+                style: TextStyle(color: Colors.greenAccent, fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Courier New'),
                 textAlign: TextAlign.center,
               ),
               Text(
                 "💰 ${mission.rewardMoney} | ⚡ ${mission.rewardPower}",
-                style: TextStyle(color: Colors.white70, fontSize: 13, fontFamily: 'Courier New'),
+                style: TextStyle(color: Colors.white70, fontSize: 14, fontFamily: 'Courier New'),
               ),
               isLocked
                   ? Icon(Icons.lock, color: Colors.redAccent, size: 30)
@@ -169,7 +169,7 @@ class _MissionsListViewState extends State<MissionsListView> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.greenAccent,
                   foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
                 onPressed: () {
                   playerMissionViewModel.startMission(playerViewModel.player!.id, missionId);
@@ -182,7 +182,7 @@ class _MissionsListViewState extends State<MissionsListView> {
                     ),
                   );
                 },
-                child: Text("GO", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                child: Text("GO", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
               ),
             ],
           ),
