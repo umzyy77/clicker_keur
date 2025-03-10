@@ -42,10 +42,6 @@ class MissionViewModel extends ChangeNotifier {
     }
   }
 
-
-
-
-
   /// 🔹 Récupère une mission spécifique
   Future<void> loadMission(int missionId) async {
     _isLoading = true;
@@ -53,6 +49,8 @@ class MissionViewModel extends ChangeNotifier {
 
     try {
       _selectedMission = await _missionService.getMission(missionId);
+      await loadMissionObjective(missionId);
+      print(_missionObjective);
     } catch (e) {
       _errorMessage =
           "Erreur lors du chargement de la mission : ${e.toString()}";
@@ -79,21 +77,7 @@ class MissionViewModel extends ChangeNotifier {
   }
 
   Future<int?> getMissionClicksRequired(int missionId) async {
-    final mission = _missions.firstWhere(
-          (m) => m.idMission == missionId,
-      orElse: () => MissionModel(
-        idMission: -1, // Valeur invalide pour indiquer l'absence
-        name: "Inconnue",
-        rewardMoney: 0,
-        rewardPower: 0,
-        difficulty: DifficultyModel(
-          idDifficulty: -1,
-          label: "Inconnu",
-          clicksRequired: 0,
-        ),
-      ),
-    );
-
+    MissionModel? mission = await _missionService.getMission(missionId);
 
     if (mission == null) {
       print("⚠️ Mission introuvable pour l'ID : $missionId");

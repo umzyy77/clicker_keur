@@ -12,8 +12,7 @@ import '../widgets/mission_completion_dialog.dart';
 class MissionGameView extends StatefulWidget {
   final PlayerMissionModel playerMission;
 
-  const MissionGameView({Key? key, required this.playerMission})
-      : super(key: key);
+  const MissionGameView({super.key, required this.playerMission});
 
   @override
   _MissionGameViewState createState() => _MissionGameViewState();
@@ -21,83 +20,16 @@ class MissionGameView extends StatefulWidget {
 
 class _MissionGameViewState extends State<MissionGameView>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _animation;
   int? clicksRequired;
   late PlayerMissionModel _currentMission;
-  bool _isMissionComplete = false; // 🔹 Bloque les clics après complétion
 
   @override
   void initState() {
     super.initState();
     _currentMission = widget.playerMission;
-
-    _animationController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 200),
-    );
-    _animation =
-        CurvedAnimation(parent: _animationController, curve: Curves.easeOut);
-
-    _loadClicksRequired();
-  }
-
-  Future<void> _loadClicksRequired() async {
-    final missionViewModel =
-        Provider.of<MissionViewModel>(context, listen: false);
-    int? requiredClicks = await missionViewModel
-        .getMissionClicksRequired(_currentMission.mission);
-
-    if (requiredClicks != null) {
-      setState(() {
-        clicksRequired = requiredClicks;
-      });
-    }
-  }
-
-  Future<void> _incrementClicks() async {
-    if (_isMissionComplete)
-      return; // 🔹 Bloquer les clics si la mission est terminée
-
-    final playerViewModel =
-        Provider.of<PlayerViewModel>(context, listen: false);
-    final playerMissionViewModel =
-        Provider.of<PlayerMissionViewModel>(context, listen: false);
-
-    bool success = await playerMissionViewModel.incrementMissionClicks(
-      playerViewModel.player!.id,
-      _currentMission.mission,
-    );
-
-    if (!success) {
-      setState(() {
-        _isMissionComplete = true;
-      });
-      showMissionCompletionDialog(context, _currentMission.mission);
-      return;
-    }
-
-    // 🔹 Rafraîchir les missions après un clic
-    await playerMissionViewModel.loadPlayerMissions(playerViewModel.player!.id);
-
-    setState(() {
-      final updatedMission = playerMissionViewModel.playerMissions.firstWhere(
-        (mission) => mission.mission == _currentMission.mission,
-        orElse: () => _currentMission,
-      );
-
-      if (updatedMission.mission != _currentMission.mission ||
-          updatedMission.clicksDone != _currentMission.clicksDone) {
-        _currentMission = updatedMission;
-      }
-
-      if (_currentMission.clicksDone >= (clicksRequired ?? 0)) {
-        _isMissionComplete = true;
-        showMissionCompletionDialog(context, _currentMission.mission);
-      }
-    });
-
-    _animationController.forward(from: 0.0);
+    Provider.of<MissionViewModel>(context, listen: false).loadMission(_currentMission.mission);
+    print(Provider.of<MissionViewModel>(context, listen: false)
+        .missionObjective);
   }
 
   @override
@@ -109,13 +41,22 @@ class _MissionGameViewState extends State<MissionGameView>
           MissionEnnemy(missionId: _currentMission.mission),
           MissionProgressBar(
             clicksDone: _currentMission.clicksDone,
-            clicksRequired: clicksRequired,
+            clicksRequired: Provider.of<MissionViewModel>(context, listen: false)
+                .missionObjective,
           ),
+          Text("${_currentMission.clicksDone}"),
           MissionClickButton(
-            onTap: _isMissionComplete ? () {} : () => _incrementClicks(),
+            onTap: _currentMission.clicksDone >= (
+                Provider.of<MissionViewModel>(context, listen: false)
+                    .missionObjective ?? 0)
+                ? () => showMissionCompletionDialog(
+                    context, _currentMission.mission)
+                : () => Provider.of<PlayerMissionViewModel>(context, listen: false)
+                .incrementMissionClicks(
+                Provider.of<PlayerViewModel>(context, listen: false)
+                    .player!.id, _currentMission.mission)
           ),
         ],
-
       ),
     );
   }
