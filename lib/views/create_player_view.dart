@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/player_viewmodel.dart';
-import 'player_created_view.dart';
+import 'home_view.dart';
 
 class CreatePlayerView extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
@@ -33,11 +33,17 @@ class CreatePlayerView extends StatelessWidget {
               onPressed: () async {
                 String username = _usernameController.text.trim();
                 if (username.isNotEmpty) {
-                  await playerViewModel.createPlayer(username);
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => PlayerCreatedView()),
-                  );
+                  bool success = await playerViewModel.createPlayer(username);
+                  if (success) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomeView()),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("❌ Échec de la création du joueur.")),
+                    );
+                  }
                 }
               },
               child: Text("Créer mon hacker"),
