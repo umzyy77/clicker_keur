@@ -39,4 +39,6 @@ flutter:
     - assets/hacker.png
     - assets/player.json
     - assets/background.png
+    - assets/background_pc.png
+    - assets/background_mobile.png
 
