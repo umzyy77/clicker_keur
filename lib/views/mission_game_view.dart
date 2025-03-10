@@ -52,7 +52,6 @@ class _MissionGameViewState extends State<MissionGameView>
             clicksDone: clicksDone,
             clicksRequired: clicksRequired,
           ),
-          Text("$clicksDone"),
           MissionClickButton(
             onTap: clicksDone >= (clicksRequired ?? 0)
                 ? () => showMissionCompletionDialog(context, _currentMission.mission)
