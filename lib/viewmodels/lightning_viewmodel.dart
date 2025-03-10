@@ -1,25 +1,33 @@
 import 'package:flutter/material.dart';
 import '../models/lightning_model.dart';
+import 'dart:math';
 
 class LightningViewModel extends ChangeNotifier {
   final LightningModel _lightningModel;
-  bool _isAnimating = false;
+  final List<Map<String, dynamic>> _activeLightnings = [];
 
   LightningViewModel({required LightningModel lightningModel})
       : _lightningModel = lightningModel;
 
   String get animationPath => _lightningModel.animationPath;
-  bool get isAnimating => _isAnimating;
 
-  // Démarrer l'animation d'éclair
+  List<Map<String, dynamic>> get activeLightnings => _activeLightnings;
+
   void triggerLightning() {
-    _isAnimating = true;
-    notifyListeners();
-  }
+    String id = DateTime.now().millisecondsSinceEpoch.toString(); // ID unique
+    double randomX = 250 + Random().nextDouble() * 50; // Variation légère en X
 
-  // Arrêter l'animation après sa durée
-  void stopLightning() {
-    _isAnimating = false;
+    _activeLightnings.add({
+      "id": id,
+      "position": Offset(randomX, 300), // Position en haut
+    });
+
     notifyListeners();
+
+    // Supprimer l’éclair après l'animation
+    Future.delayed(Duration(milliseconds: 600), () {
+      _activeLightnings.removeWhere((lightning) => lightning["id"] == id);
+      notifyListeners();
+    });
   }
 }

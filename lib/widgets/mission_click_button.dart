@@ -4,7 +4,7 @@ import 'package:lottie/lottie.dart';
 import '../viewmodels/lightning_viewmodel.dart';
 
 class MissionClickButton extends StatelessWidget {
-  final VoidCallback onTap; // Action définie par l'utilisateur
+  final VoidCallback onTap;
 
   const MissionClickButton({super.key, required this.onTap});
 
@@ -20,8 +20,8 @@ class MissionClickButton extends StatelessWidget {
           top: 400,
           child: GestureDetector(
             onTap: () {
-              lightningViewModel.triggerLightning(); // Joue l'animation d'éclair
-              onTap(); // Exécute l'action fournie
+              lightningViewModel.triggerLightning(); // Joue un nouvel éclair
+              onTap(); // Exécute l'action
             },
             child: Image.asset(
               'assets/laptop.png',
@@ -30,25 +30,21 @@ class MissionClickButton extends StatelessWidget {
           ),
         ),
 
-        // Éclair qui apparaît et disparaît après animation
-        if (lightningViewModel.isAnimating)
-          Positioned(
-            top: 300, // Position d'apparition
+        // Afficher plusieurs éclairs actifs
+        ...lightningViewModel.activeLightnings.map((lightning) {
+          return Positioned(
+            top: lightning["position"].dy,
             child: Transform.rotate(
-              angle: -3.14 * 3 / 4, // 🔄 Rotation exacte de -135°
+              angle: -3.14 * 3 / 4, // -135° de rotation
               child: Lottie.asset(
                 'assets/lightning.json',
                 width: 150,
                 height: 150,
                 repeat: false,
-                onLoaded: (composition) {
-                  Future.delayed(composition.duration, () {
-                    lightningViewModel.stopLightning(); // Arrête l'animation après sa durée
-                  });
-                },
               ),
             ),
-          ),
+          );
+        }).toList(),
       ],
     );
   }
