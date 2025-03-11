@@ -19,7 +19,7 @@ class LightningViewModel extends ChangeNotifier {
     notifyListeners();
 
     // Supprimer l’éclair après l'animation (600ms)
-    Future.delayed(Duration(milliseconds: 600), () {
+    Future.delayed(const Duration(milliseconds: 600), () {
       _activeLightnings.remove(id);
       notifyListeners();
     });

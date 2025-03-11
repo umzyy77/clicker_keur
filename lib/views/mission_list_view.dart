@@ -8,6 +8,8 @@ import '../viewmodels/player_viewmodel.dart';
 import '../viewmodels/player_mission_viewmodel.dart';
 
 class MissionsListView extends StatefulWidget {
+  const MissionsListView({super.key});
+
   @override
   _MissionsListViewState createState() => _MissionsListViewState();
 }
@@ -50,7 +52,7 @@ class _MissionsListViewState extends State<MissionsListView> {
         _showGifAnimation = true;
       });
 
-      Future.delayed(Duration(seconds: 2), () {
+      Future.delayed(const Duration(seconds: 2), () {
         if (mounted) {
           setState(() {
             _showGifAnimation = false;
@@ -73,7 +75,7 @@ class _MissionsListViewState extends State<MissionsListView> {
       body: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage("assets/background_hacker1.png"),
                 fit: BoxFit.cover,
@@ -84,11 +86,11 @@ class _MissionsListViewState extends State<MissionsListView> {
             top: screenHeight * 0.05,
             left: screenWidth * 0.05,
             child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.greenAccent, size: 30),
+              icon: const Icon(Icons.arrow_back, color: Colors.greenAccent, size: 30),
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => HomeView()),
+                  MaterialPageRoute(builder: (context) => const HomeView()),
                 );
               },
             ),
@@ -114,12 +116,12 @@ class _MissionsListViewState extends State<MissionsListView> {
   }
 
   Widget _buildMissionCard(PlayerMissionViewModel playerMissionViewModel, MissionViewModel missionViewModel, PlayerViewModel playerViewModel, int index) {
-    if (index >= playerMissionViewModel.playerMissions.length) return SizedBox();
+    if (index >= playerMissionViewModel.playerMissions.length) return const SizedBox();
 
     final missionId = playerMissionViewModel.playerMissions[index].mission;
     MissionModel? mission = missionViewModel.getMissionById(missionId);
 
-    if (mission == null) return SizedBox();
+    if (mission == null) return const SizedBox();
 
     bool isLocked = playerMissionViewModel.playerMissions[index].status == 1;
 
@@ -151,20 +153,20 @@ class _MissionsListViewState extends State<MissionsListView> {
                     image: AssetImage("assets/missionsbanner_$missionId.png"),
                     fit: BoxFit.cover,
                   ),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
                 ),
               ),
               Text(
                 mission.name,
-                style: TextStyle(color: Colors.greenAccent, fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Courier New'),
+                style: const TextStyle(color: Colors.greenAccent, fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Courier New'),
                 textAlign: TextAlign.center,
               ),
               Text(
                 "💰 ${mission.rewardMoney} | ⚡ ${mission.rewardPower}",
-                style: TextStyle(color: Colors.white70, fontSize: 14, fontFamily: 'Courier New'),
+                style: const TextStyle(color: Colors.white70, fontSize: 14, fontFamily: 'Courier New'),
               ),
               isLocked
-                  ? Icon(Icons.lock, color: Colors.redAccent, size: 30)
+                  ? const Icon(Icons.lock, color: Colors.redAccent, size: 30)
                   : ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.greenAccent,
@@ -182,7 +184,7 @@ class _MissionsListViewState extends State<MissionsListView> {
                     ),
                   );
                 },
-                child: Text("GO", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                child: const Text("GO", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
               ),
             ],
           ),

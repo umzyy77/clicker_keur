@@ -9,15 +9,15 @@ void showDeleteConfirmation(BuildContext context, PlayerViewModel playerViewMode
     builder: (context) => AlertDialog(
       backgroundColor: Colors.black,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      title: Text("⚠️ Supprimer le joueur ?", style: TextStyle(color: Colors.redAccent)),
-      content: Text(
+      title: const Text("⚠️ Supprimer le joueur ?", style: TextStyle(color: Colors.redAccent)),
+      content: const Text(
         "Cette action est irréversible. Êtes-vous sûr de vouloir supprimer votre joueur ?",
         style: TextStyle(color: Colors.white),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text("Annuler", style: TextStyle(color: Colors.white)),
+          child: const Text("Annuler", style: TextStyle(color: Colors.white)),
         ),
         TextButton(
           onPressed: () async {
@@ -30,7 +30,7 @@ void showDeleteConfirmation(BuildContext context, PlayerViewModel playerViewMode
                   (route) => false, // Supprime toutes les routes précédentes
             );
           },
-          child: Text("Supprimer", style: TextStyle(color: Colors.redAccent)),
+          child: const Text("Supprimer", style: TextStyle(color: Colors.redAccent)),
         ),
       ],
     ),

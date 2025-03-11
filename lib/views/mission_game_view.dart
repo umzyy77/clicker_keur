@@ -44,7 +44,7 @@ class _MissionGameViewState extends State<MissionGameView>
         .clicksDone;
 
     return Scaffold(
-      appBar: AppBar(title: Text("Mission en cours")),
+      appBar: AppBar(title: const Text("Mission en cours")),
       body: Stack(
         children: [
           MissionEnnemy(missionId: _currentMission.mission),

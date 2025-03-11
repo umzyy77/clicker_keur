@@ -4,9 +4,9 @@ class MissionEnnemy extends StatelessWidget {
   final int missionId;
 
   const MissionEnnemy({
-    Key? key,
+    super.key,
     required this.missionId,
-  }) : super(key: key);
+  });
 
   String getMissionImage() {
     switch (missionId) {

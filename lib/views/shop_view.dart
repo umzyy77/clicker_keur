@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../viewmodels/upgrade_viewmodel.dart';
 
 class ShopView extends StatefulWidget {
+  const ShopView({super.key});
+
   @override
   _ShopViewState createState() => _ShopViewState();
 }
@@ -22,16 +24,16 @@ class _ShopViewState extends State<ShopView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("🏪 Boutique d'Améliorations"),
+        title: const Text("🏪 Boutique d'Améliorations"),
         backgroundColor: Colors.deepPurple,
       ),
       body: Center(
         child: upgradeViewModel.isLoading
-            ? CircularProgressIndicator()
+            ? const CircularProgressIndicator()
             : upgradeViewModel.upgrades.isEmpty
             ? Text(
           upgradeViewModel.errorMessage ?? "Aucune amélioration disponible.",
-          style: TextStyle(fontSize: 18, color: Colors.grey),
+          style: const TextStyle(fontSize: 18, color: Colors.grey),
         )
             : ListView.builder(
           itemCount: upgradeViewModel.upgrades.length,
@@ -39,10 +41,10 @@ class _ShopViewState extends State<ShopView> {
             final upgrade = upgradeViewModel.upgrades[index];
 
             return Card(
-              margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               elevation: 4,
               child: Container(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
@@ -52,15 +54,15 @@ class _ShopViewState extends State<ShopView> {
                   children: [
                     Text(
                       "${upgrade.upgradeLevel.name} - Niveau ${upgrade.upgradeLevel.level}",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text("💰 Coût : ${upgrade.upgradeLevel.cost}",
-                        style: TextStyle(fontSize: 16, color: Colors.grey)),
-                    SizedBox(height: 8),
+                        style: const TextStyle(fontSize: 16, color: Colors.grey)),
+                    const SizedBox(height: 8),
                     Text("⚡ Bonus : ${upgrade.upgradeLevel.boostValue}",
-                        style: TextStyle(fontSize: 16, color: Colors.green)),
-                    SizedBox(height: 16),
+                        style: const TextStyle(fontSize: 16, color: Colors.green)),
+                    const SizedBox(height: 16),
 
                     if (!upgrade.purchased)
                       Center(
@@ -70,9 +72,9 @@ class _ShopViewState extends State<ShopView> {
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.deepPurple,
-                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                           ),
-                          child: Text("🛒 Acheter", style: TextStyle(fontSize: 16, color: Colors.white)),
+                          child: const Text("🛒 Acheter", style: TextStyle(fontSize: 16, color: Colors.white)),
                         ),
                       ),
                   ],

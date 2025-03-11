@@ -6,6 +6,8 @@ import 'package:untitled1/views/player_profile_view.dart';
 import 'package:untitled1/views/shop_view.dart';
 
 class HomeView extends StatefulWidget {
+  const HomeView({super.key});
+
   @override
   _HomeViewState createState() => _HomeViewState();
 }
@@ -28,7 +30,7 @@ class _HomeViewState extends State<HomeView> {
         : "assets/background_mobile.png";
 
     if (player == null) {
-      return Scaffold(
+      return const Scaffold(
         body: Center(
           child: Text(
             "Aucun joueur trouvé",
@@ -55,13 +57,13 @@ class _HomeViewState extends State<HomeView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildMenuItem("▶ JOUER", () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => MissionsListView()));
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const MissionsListView()));
                 }),
                 _buildMenuItem("🛒 SHOP", () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ShopView()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const ShopView()));
                 }),
                 _buildMenuItem("👤 JOUEUR", () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => PlayerProfileView()));
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const PlayerProfileView()));
                 }),
               ],
             ),
@@ -75,13 +77,13 @@ class _HomeViewState extends State<HomeView> {
               children: [
                 Text(
                   player.username,
-                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Row(
                   children: [
                     _buildInfoText("💻 ${player.hackingPower}"),
-                    SizedBox(width: 20),
+                    const SizedBox(width: 20),
                     _buildInfoText("💰 ${player.money}"),
                   ],
                 ),
@@ -103,7 +105,7 @@ class _HomeViewState extends State<HomeView> {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 25),
           child: AnimatedDefaultTextStyle(
-            duration: Duration(milliseconds: 150),
+            duration: const Duration(milliseconds: 150),
             style: TextStyle(
               fontSize: MediaQuery.of(context).size.width > 600 ? 48 : 32,
               fontWeight: FontWeight.bold,
@@ -121,7 +123,7 @@ class _HomeViewState extends State<HomeView> {
   Widget _buildInfoText(String text) {
     return Text(
       text,
-      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
     );
   }
 }

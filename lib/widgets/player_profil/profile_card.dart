@@ -9,7 +9,7 @@ class ProfileCard extends StatelessWidget {
   final PlayerViewModel playerViewModel;
   final Color redAccentColor = Colors.redAccent;
 
-  ProfileCard({required this.player, required this.playerViewModel});
+  const ProfileCard({super.key, required this.player, required this.playerViewModel});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class ProfileCard extends StatelessWidget {
 
     return Container(
       width: screenSize.width > 600 ? 500 : screenSize.width * 0.9,
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.black.withOpacity(0.8),
         borderRadius: BorderRadius.circular(15),
@@ -30,12 +30,12 @@ class ProfileCard extends StatelessWidget {
         children: [
           Text(
             player.username.toUpperCase(),
-            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+            style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
           ),
-          SizedBox(height: 15),
+          const SizedBox(height: 15),
           ProfileStatRow(label: "💻 Puissance de hacking", value: "${player.hackingPower}"),
           ProfileStatRow(label: "💰 Argent", value: "${player.money}"),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           ProfileDeleteButton(playerViewModel: playerViewModel),
         ],
       ),

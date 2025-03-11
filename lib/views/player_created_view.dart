@@ -5,12 +5,14 @@ import '../viewmodels/player_viewmodel.dart';
 import 'home_view.dart';
 
 class PlayerCreatedView extends StatelessWidget {
+  const PlayerCreatedView({super.key});
+
   @override
   Widget build(BuildContext context) {
     final playerViewModel = Provider.of<PlayerViewModel>(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text("Hacker créé !")),
+      appBar: AppBar(title: const Text("Hacker créé !")),
       body: Center(
         child: playerViewModel.player != null
             ? Column(
@@ -18,31 +20,31 @@ class PlayerCreatedView extends StatelessWidget {
           children: [
             Text(
               "Bienvenue, ${playerViewModel.player!.username} !",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text("💻 Puissance de hacking : ${playerViewModel.player!.hackingPower}"),
             Text("💰 Argent : ${playerViewModel.player!.money}"),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => HomeView()),
+                  MaterialPageRoute(builder: (context) => const HomeView()),
                 );
               },
-              child: Text("Aller au menu"),
+              child: const Text("Aller au menu"),
             ),
           ],
         )
             : Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               "❌ Échec de la création du joueur.",
               style: TextStyle(fontSize: 18, color: Colors.red, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushReplacement(
@@ -50,7 +52,7 @@ class PlayerCreatedView extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => CreatePlayerView()),
                 );
               },
-              child: Text("Réessayer"),
+              child: const Text("Réessayer"),
             ),
           ],
         ),

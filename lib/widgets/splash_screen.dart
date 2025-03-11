@@ -6,6 +6,8 @@ import '../viewmodels/player_viewmodel.dart';
 
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -24,11 +26,11 @@ class _SplashScreenState extends State<SplashScreen> {
     final playerViewModel = Provider.of<PlayerViewModel>(context, listen: false);
     await playerViewModel.loadPlayer();
 
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 2), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => playerViewModel.player != null ? HomeView() : CreatePlayerView(),
+          builder: (_) => playerViewModel.player != null ? const HomeView() : CreatePlayerView(),
         ),
       );
     });
@@ -36,6 +38,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: CircularProgressIndicator()));
+    return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }

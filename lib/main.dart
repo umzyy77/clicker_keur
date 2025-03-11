@@ -31,12 +31,14 @@ void main() async {
         ),
 
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -45,8 +47,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.dark(),
       initialRoute: '/',
       routes: {
-        '/': (context) => SplashScreen(),
-        '/home': (context) => HomeView(),
+        '/': (context) => const SplashScreen(),
+        '/home': (context) => const HomeView(),
       },
     );
   }

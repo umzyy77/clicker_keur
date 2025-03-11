@@ -5,10 +5,10 @@ class MissionProgressBar extends StatelessWidget {
   final int? clicksRequired;
 
   const MissionProgressBar({
-    Key? key,
+    super.key,
     required this.clicksDone,
     required this.clicksRequired,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +21,9 @@ class MissionProgressBar extends StatelessWidget {
             clicksRequired != null
                 ? "$clicksDone / $clicksRequired"
                 : "Chargement...",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           SizedBox(
             width: 150,
             child: LinearProgressIndicator(

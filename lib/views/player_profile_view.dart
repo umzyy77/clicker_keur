@@ -7,13 +7,15 @@ import '../viewmodels/player_viewmodel.dart';
 
 
 class PlayerProfileView extends StatelessWidget {
+  const PlayerProfileView({super.key});
+
   @override
   Widget build(BuildContext context) {
     final playerViewModel = Provider.of<PlayerViewModel>(context);
     final player = playerViewModel.player;
 
     if (player == null) {
-      return Scaffold(
+      return const Scaffold(
         body: Center(
           child: Text(
             "Aucun joueur trouvé.",
@@ -26,8 +28,8 @@ class PlayerProfileView extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          ProfileBackground(),
-          ProfileHeader(),
+          const ProfileBackground(),
+          const ProfileHeader(),
           Center(child: ProfileCard(player: player, playerViewModel: playerViewModel)),
         ],
       ),

@@ -1,7 +1,3 @@
-import 'player_model.dart';
-import 'mission_model.dart';
-import 'status_model.dart';
-
 class PlayerMissionModel {
   final int mission;
   int status;

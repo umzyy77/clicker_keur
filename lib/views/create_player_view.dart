@@ -6,29 +6,31 @@ import 'home_view.dart';
 class CreatePlayerView extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
 
+  CreatePlayerView({super.key});
+
   @override
   Widget build(BuildContext context) {
     final playerViewModel = Provider.of<PlayerViewModel>(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text("Créer un hacker")),
+      appBar: AppBar(title: const Text("Créer un hacker")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Entrez votre pseudo :", style: TextStyle(fontSize: 18)),
-            SizedBox(height: 10),
+            const Text("Entrez votre pseudo :", style: TextStyle(fontSize: 18)),
+            const SizedBox(height: 10),
             TextField(
               controller: _usernameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: "Nom de hacker",
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             playerViewModel.isLoading
-                ? CircularProgressIndicator()
+                ? const CircularProgressIndicator()
                 : ElevatedButton(
               onPressed: () async {
                 String username = _usernameController.text.trim();
@@ -37,16 +39,16 @@ class CreatePlayerView extends StatelessWidget {
                   if (success) {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => HomeView()),
+                      MaterialPageRoute(builder: (context) => const HomeView()),
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("❌ Échec de la création du joueur.")),
+                      const SnackBar(content: Text("❌ Échec de la création du joueur.")),
                     );
                   }
                 }
               },
-              child: Text("Créer mon hacker"),
+              child: const Text("Créer mon hacker"),
             ),
           ],
         ),
